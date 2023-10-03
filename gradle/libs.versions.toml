@@ -11,6 +11,7 @@ koin = "3.4.3"
 mokoMvvmVersion = "0.16.1"
 windowSizeClass = "0.3.0"
 settings = "1.0.0"
+coil = "2.4.0"
 
 [libraries]
 androidxComposeFoundation = { module = "androidx.compose.foundation:foundation", version.ref = "compose" }
@@ -46,6 +47,7 @@ sqlDelightNative = { module = "app.cash.sqldelight:native-driver", version.ref =
 sqlDelightJvm = { module = "app.cash.sqldelight:sqlite-driver", version.ref = "sqlDelight" }
 windowSizeClass = { module = "dev.chrisbanes.material3:material3-window-size-class-multiplatform", version.ref = "windowSizeClass" }
 settings = { module = "com.russhwolf:multiplatform-settings" , version.ref = "settings" }
+coilCompose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
 
 [bundles]
 androidxCompose = [

@@ -25,8 +25,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.rdev.tt._utils.Spacing
+import com.rdev.tt.core_model.Category
 import com.rdev.tt.core_model.Question
-import java.io.File
+import com.rdev.tt.ui.components.CustomImage
 
 private val Indexers = listOf("A.", "B.", "C.", "D.")
 
@@ -34,7 +35,7 @@ private val Indexers = listOf("A.", "B.", "C.", "D.")
 fun QuestionComp(
     questionIndex: Int,
     question: Question,
-    getImageFilePath: (String?) -> String?,
+    category: @Category String,
     onAnswer: (questionId: Long, answerIdx: Int) -> Unit,
     modifier: Modifier = Modifier,
     preselect: Int = -1,
@@ -52,21 +53,14 @@ fun QuestionComp(
             style = MaterialTheme.typography.titleMedium
         )
 
-        getImageFilePath(question.image)?.let {
-            if (!File(it).exists()) {
-                // TODO: report missing image
-                return@let
-            }
-
-//            val image = remember(it) { imageFromFile(File(it)) }
-
-//            Image(
-//                image,
-//                null,
-//                modifier
-//                    .height(250.dp)
-//                    .padding(top = Spacing.x6)
-//            )
+        question.image?.let { img ->
+            CustomImage(
+                img,
+                category,
+                modifier
+                    .height(250.dp)
+                    .padding(top = Spacing.x6)
+            )
         }
 
         Spacer(modifier.height(Spacing.x6))

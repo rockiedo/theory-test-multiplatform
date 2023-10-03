@@ -32,6 +32,7 @@ kotlin {
         val androidMain by getting {
             dependencies {
                 api(libs.koinAndroid)
+                implementation(libs.coilCompose)
                 implementation(libs.sqlDelightAndroid)
             }
         }

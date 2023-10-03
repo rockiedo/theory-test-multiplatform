@@ -16,7 +16,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.rdev.tt.AppNavItem
 import com.rdev.tt._utils.Spacing
-import com.rdev.tt._utils.koinViewModel
 import com.rdev.tt.ui.question.QuestionComp
 
 private const val DEFAULT_ANSWER = -1
@@ -26,8 +25,7 @@ private const val DEFAULT_ANSWER = -1
 fun TestResultScreen(
     navItem: AppNavItem.TestResult,
     onClose: () -> Unit,
-    modifier: Modifier = Modifier,
-    viewModel: TestResultViewModel = koinViewModel()
+    modifier: Modifier = Modifier
 ) {
     LazyColumn(modifier) {
         stickyHeader {
@@ -60,9 +58,7 @@ fun TestResultScreen(
                 QuestionComp(
                     index,
                     question,
-                    getImageFilePath = {
-                        viewModel.getImageFilePath(it, navItem.category)
-                    },
+                    navItem.category,
                     modifier = Modifier.fillMaxWidth().padding(horizontal = Spacing.x8),
                     onAnswer = { _, _ -> },
                     preselect = navItem.userAnswers[question.id] ?: DEFAULT_ANSWER
