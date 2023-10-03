@@ -1,4 +1,4 @@
-CREATE TABLE QuestionSuiteEntity (
+CREATE TABLE IF NOT EXISTS QuestionSuiteEntity (
     questionId INTEGER NOT NULL,
     suiteId INTEGER NOT NULL,
     PRIMARY KEY (questionId, suiteId)

@@ -1,7 +1,7 @@
 import kotlin.String;
 import kotlin.collections.List;
 
-CREATE TABLE QuestionEntity(
+CREATE TABLE IF NOT EXISTS QuestionEntity(
     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     question TEXT NOT NULL,
     choices TEXT AS List<String> NOT NULL,

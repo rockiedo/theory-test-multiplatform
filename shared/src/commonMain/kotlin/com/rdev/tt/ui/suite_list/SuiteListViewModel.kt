@@ -17,7 +17,7 @@ data class SuiteItem(
 
 sealed interface SuiteListUiState {
     data object Loading : SuiteListUiState
-    data object Error : SuiteListUiState
+    data class Error(val e: Throwable) : SuiteListUiState
     data class Content(
         val suites: List<SuiteItem>,
         val allQuestionCount: Int,
@@ -38,7 +38,9 @@ class SuiteListViewModel(
             _categoryFlow.collect {
                 appRepo.getQuestionIdsByCategory(it)
                     .onSuccess { ids -> loadSuites(ids) }
-                    .onFailure { _uiState.value = SuiteListUiState.Error }
+                    .onFailure { e ->
+                        _uiState.value = SuiteListUiState.Error(e)
+                    }
             }
         }
     }
@@ -52,7 +54,9 @@ class SuiteListViewModel(
                 val result = appRepo.getSuitesWithQuestionCount(eligibleIds).getOrThrow()
 
                 val items = result.filter { it.questionCount > 0L }.map {
-                    val learnedCount = appRepo.countLearnedQuestions(it.id, learnedQuestionIds).getOrThrow().toInt()
+                    val learnedCount =
+                        appRepo.countLearnedQuestions(it.id, learnedQuestionIds).getOrThrow()
+                            .toInt()
                     SuiteItem(
                         Suite(it.id, it.name),
                         questionCount = it.questionCount.toInt(),
@@ -65,8 +69,8 @@ class SuiteListViewModel(
                     allQuestionCount = items.sumOf { it.questionCount },
                     learnedQuestionCount = learnedQuestionIds.size,
                 )
-            }.onFailure {
-                _uiState.value = SuiteListUiState.Error
+            }.onFailure { e ->
+                _uiState.value = SuiteListUiState.Error(e)
             }
         }
     }

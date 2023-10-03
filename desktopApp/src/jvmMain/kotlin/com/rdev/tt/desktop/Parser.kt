@@ -1,4 +1,4 @@
-package com.rdev.tt
+package com.rdev.tt.desktop
 
 import com.rdev.tt.data.dataModule
 import com.rdev.tt.data.database.AppDb
