@@ -15,6 +15,8 @@ object Spacing {
     val x8 = scale(8)
 }
 
-//fun imageFromFile(file: File): ImageBitmap {
-//    return org.jetbrains.skia.Image.makeFromEncoded(file.readBytes()).toComposeImageBitmap()
-//}
+fun isValidImageName(name: String?): Boolean {
+    name ?: return false
+    if (name.trim().isEmpty()) return false
+    return true
+}

@@ -14,6 +14,9 @@ import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -25,12 +28,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.rdev.tt._utils.Spacing
+import com.rdev.tt._utils.isValidImageName
 import com.rdev.tt.core_model.Category
 import com.rdev.tt.core_model.Question
 import com.rdev.tt.ui.components.CustomImage
 
 private val Indexers = listOf("A.", "B.", "C.", "D.")
 
+@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
 fun QuestionComp(
     questionIndex: Int,
@@ -43,6 +48,7 @@ fun QuestionComp(
 ) {
     var selection by remember(question, preselect) { mutableStateOf(preselect) }
     val hasUserInput = selection != -1
+    val windowSizeClass = calculateWindowSizeClass().widthSizeClass
 
     Column(
         modifier,
@@ -53,17 +59,25 @@ fun QuestionComp(
             style = MaterialTheme.typography.titleMedium
         )
 
-        question.image?.let { img ->
+        if (isValidImageName(question.image)) {
+            if (windowSizeClass == WindowWidthSizeClass.Compact) {
+                Spacer(Modifier.height(Spacing.x4))
+            } else {
+                Spacer(Modifier.height(Spacing.x6))
+            }
+
             CustomImage(
-                img,
+                question.image!!,
                 category,
-                modifier
-                    .height(250.dp)
-                    .padding(top = Spacing.x6)
+                Modifier.fillMaxWidth().height(250.dp)
             )
         }
 
-        Spacer(modifier.height(Spacing.x6))
+        if (windowSizeClass == WindowWidthSizeClass.Compact) {
+            Spacer(Modifier.height(Spacing.x4))
+        } else {
+            Spacer(Modifier.height(Spacing.x6))
+        }
 
         question.choices.forEachIndexed { index, choice ->
             ChoiceComp(
@@ -83,6 +97,8 @@ fun QuestionComp(
                 toNextQuestion = toNextQuestion
             )
         }
+
+        Spacer(modifier.height(Spacing.x6))
     }
 }
 
