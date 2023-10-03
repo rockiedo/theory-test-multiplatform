@@ -1,0 +1,16 @@
+import kotlin.Boolean;
+
+CREATE TABLE HistoryEntity (
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    questionId INTEGER NOT NULL,
+    isCorrect INTEGER AS Boolean NOT NULL,
+    timestamp TEXT NOT NULL
+);
+
+insertHistory:
+INSERT OR REPLACE INTO HistoryEntity(questionId, isCorrect, timestamp)
+VALUES (?, ?, ?);
+
+getLearnedQuestionIdsFilteredByIds:
+SELECT DISTINCT questionId FROM HistoryEntity
+WHERE questionId IN ? AND isCorrect = 1;

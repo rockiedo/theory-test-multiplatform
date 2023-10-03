@@ -1,0 +1,17 @@
+CREATE TABLE QuestionSuiteEntity (
+    questionId INTEGER NOT NULL,
+    suiteId INTEGER NOT NULL,
+    PRIMARY KEY (questionId, suiteId)
+);
+
+insert:
+INSERT OR REPLACE INTO QuestionSuiteEntity
+VALUES ?;
+
+getQuestionIdsFromSuite:
+SELECT questionId FROM QuestionSuiteEntity
+WHERE suiteId = ?;
+
+countLearnedQuestions:
+SELECT COUNT(DISTINCT  questionId) FROM QuestionSuiteEntity
+WHERE suiteId = ? AND questionId IN ?;

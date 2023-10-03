@@ -1,0 +1,25 @@
+CREATE TABLE SuiteEntity (
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL
+);
+
+insertSuite:
+INSERT OR REPLACE INTO SuiteEntity(name)
+VALUES (?);
+
+getLastInsertedId:
+SELECT last_insert_rowid();
+
+getAllSuites:
+SELECT * FROM SuiteEntity;
+
+getSuitesWithQuestionCount:
+SELECT SuiteEntity.id AS id, SuiteEntity.name AS name, COUNT(QuestionSuiteEntity.questionId) AS questionCount
+FROM SuiteEntity LEFT JOIN QuestionSuiteEntity ON SuiteEntity.id = QuestionSuiteEntity.suiteId
+GROUP BY SuiteEntity.id;
+
+getSuitesWithQuestionCountByQuestionIds:
+SELECT SuiteEntity.id AS id, SuiteEntity.name AS name, COUNT(QuestionSuiteEntity.questionId) AS questionCount
+FROM SuiteEntity LEFT JOIN QuestionSuiteEntity ON SuiteEntity.id = QuestionSuiteEntity.suiteId
+WHERE QuestionSuiteEntity.questionId IN ?
+GROUP BY SuiteEntity.id;

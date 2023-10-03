@@ -1,0 +1,27 @@
+import kotlin.String;
+import kotlin.collections.List;
+
+CREATE TABLE QuestionEntity(
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    question TEXT NOT NULL,
+    choices TEXT AS List<String> NOT NULL,
+    answerIdx INTEGER NOT NULL,
+    explanation TEXT,
+    image TEXT,
+    categories TEXT AS List<String> NOT NULL
+);
+
+insertQuestion:
+INSERT OR REPLACE INTO QuestionEntity(question, choices, answerIdx, explanation, image, categories)
+VALUES (?, ?, ?, ?, ?, ?);
+
+getLastInsertedId:
+SELECT last_insert_rowid();
+
+getQuestionsByIds:
+SELECT * FROM QuestionEntity
+WHERE id IN ?;
+
+getQuestionIdsByCategory:
+SELECT id FROM QuestionEntity
+WHERE categories LIKE ('%' || ? || '%');
