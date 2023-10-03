@@ -1,3 +1,5 @@
+@file:Suppress("INLINE_FROM_HIGHER_PLATFORM")
+
 package com.rdev.tt._utils
 
 import androidx.compose.runtime.Composable

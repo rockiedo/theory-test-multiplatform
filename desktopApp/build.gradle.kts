@@ -18,6 +18,12 @@ kotlin {
     }
 }
 
+kotlin {
+    jvmToolchain {
+        languageVersion.set(JavaLanguageVersion.of(11))
+    }
+}
+
 compose.desktop {
     application {
         mainClass = "com.rdev.tt.desktop.MainKt"
