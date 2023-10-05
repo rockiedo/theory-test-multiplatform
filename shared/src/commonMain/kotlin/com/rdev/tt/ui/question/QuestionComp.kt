@@ -90,10 +90,13 @@ fun LazyListScope.renderQuestion(
                 onAnswer(question.id, index)
             },
             modifier = Modifier.fillMaxWidth()
-                .padding(horizontal = Spacing.x4)
-                .padding(top = 0.dp, bottom = Spacing.x4),
+                .padding(horizontal = Spacing.x4),
             toNextQuestion = toNextQuestion
         )
+
+        if (index < question.choices.lastIndex) {
+            Spacer(Modifier.height(Spacing.x4))
+        }
     }
 
     item { Spacer(modifier.height(Spacing.x6)) }
