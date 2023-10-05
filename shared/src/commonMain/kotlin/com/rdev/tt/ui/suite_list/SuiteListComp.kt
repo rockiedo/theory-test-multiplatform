@@ -11,6 +11,9 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -53,17 +56,23 @@ fun SuiteListScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(
+    ExperimentalMaterial3Api::class,
+    ExperimentalMaterial3WindowSizeClassApi::class
+)
 @Composable
 private fun SuiteListComp(
     suites: List<SuiteItem>,
     modifier: Modifier = Modifier,
     onClick: (Suite) -> Unit = {},
 ) {
+    val isCompactScreen = calculateWindowSizeClass().widthSizeClass == WindowWidthSizeClass.Compact
     val itemShape = RoundedCornerShape(16)
 
     LazyColumn(modifier) {
-        item { Spacer(Modifier.height(Spacing.x4)) }
+        if (!isCompactScreen) {
+            item { Spacer(Modifier.height(Spacing.x4)) }
+        }
 
         items(suites.size) { index ->
             val item = suites[index]
