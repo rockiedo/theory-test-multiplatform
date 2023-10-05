@@ -3,8 +3,6 @@ package com.rdev.tt.ui.test_suite
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,6 +10,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
@@ -40,7 +40,7 @@ import com.rdev.tt._utils.koinViewModel
 import com.rdev.tt.core_model.Category
 import com.rdev.tt.core_model.Question
 import com.rdev.tt.core_model.Suite
-import com.rdev.tt.ui.question.QuestionComp
+import com.rdev.tt.ui.question.renderQuestion
 import com.rdev.tt._utils.Spacing as S
 
 @Composable
@@ -60,53 +60,60 @@ fun TestSuiteScreen(
         viewModel.loadTestSuite(suite.id)
     }
 
-    Column(modifier) {
-        when (uiState) {
-            TestSuiteState.Loading, TestSuiteState.Error -> {
-                Box(Modifier.fillMaxSize()) {
-                    CircularProgressIndicator(Modifier.align(Alignment.Center))
-                }
-            }
 
-            is TestSuiteState.Content -> {
-                (uiState as TestSuiteState.Content).let { content ->
-                    TestSuiteHeaderComp(
-                        suiteName = suite.name,
+    when (uiState) {
+        TestSuiteState.Loading, TestSuiteState.Error -> {
+            Box(Modifier.fillMaxSize()) {
+                CircularProgressIndicator(Modifier.align(Alignment.Center))
+            }
+        }
+
+        is TestSuiteState.Content -> {
+            (uiState as TestSuiteState.Content).let { content ->
+                LazyColumn(modifier) {
+                    item {
+                        TestSuiteHeaderComp(
+                            suiteName = suite.name,
+                            questionIdx = currentQuestion,
+                            questionCount = content.questions.size,
+                            onBackPress = onBackPress,
+                            toPrevQuestion = { currentQuestion-- },
+                            toNextQuestion = { currentQuestion++ },
+                            openResult = {
+                                openResult(content.questions, userAnswers)
+                            },
+                            shouldShowReviewButton = {
+                                userAnswers.size == content.questions.size
+                            },
+                            modifier = Modifier.fillMaxWidth().padding(Spacing.x4)
+                        )
+                    }
+
+                    item {
+                        Spacer(Modifier.height(S.x4))
+                    }
+
+                    val questionList = (uiState as TestSuiteState.Content).questions
+
+                    renderContent(
+                        questions = questionList,
+                        userAnswers = userAnswers,
                         questionIdx = currentQuestion,
-                        questionCount = content.questions.size,
-                        onBackPress = onBackPress,
-                        toPrevQuestion = { currentQuestion-- },
-                        toNextQuestion = { currentQuestion++ },
-                        openResult = {
-                            openResult(content.questions, userAnswers)
+                        category,
+                        onAnswer = { questionId, answerIdx ->
+                            val correctAnswerIdx =
+                                questionList.firstOrNull { it.id == questionId }?.answerIdx
+                            viewModel.recordAnswer(
+                                questionId,
+                                answerIdx == correctAnswerIdx
+                            )
+
+                            userAnswers[questionId] = answerIdx
                         },
-                        shouldShowReviewButton = {
-                            userAnswers.size == content.questions.size
-                        },
-                        modifier = Modifier.fillMaxWidth().padding(Spacing.x4)
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = S.x4),
+                        toNextQuestion = { currentQuestion++ }
                     )
                 }
-
-                Spacer(Modifier.height(S.x4))
-                val questionList = (uiState as TestSuiteState.Content).questions
-
-                TestSuiteComp(
-                    questions = questionList,
-                    userAnswers = userAnswers,
-                    questionIdx = currentQuestion,
-                    category,
-                    onAnswer = { questionId, answerIdx ->
-                        val correctAnswerIdx = questionList.firstOrNull { it.id == questionId }?.answerIdx
-                        viewModel.recordAnswer(
-                            questionId,
-                            answerIdx == correctAnswerIdx
-                        )
-
-                        userAnswers[questionId] = answerIdx
-                    },
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = S.x4),
-                    toNextQuestion = { currentQuestion++ }
-                )
             }
         }
     }
@@ -178,8 +185,7 @@ private fun TestSuiteHeaderComp(
 
 private const val DEFAULT_ANSWER = -1
 
-@Composable
-private fun ColumnScope.TestSuiteComp(
+private fun LazyListScope.renderContent(
     questions: List<Question>,
     userAnswers: Map<Long, Int>,
     questionIdx: Int,
@@ -190,15 +196,14 @@ private fun ColumnScope.TestSuiteComp(
 ) {
     val question = questions[questionIdx]
 
-    QuestionComp(
-        questionIdx,
-        question,
-        category,
+    renderQuestion(
+        questionIndex = questionIdx,
+        question = question,
+        category = category,
+        selection = userAnswers[question.id] ?: DEFAULT_ANSWER,
+        isCompactScreen = false,
         onAnswer = onAnswer,
         modifier = modifier.padding(horizontal = S.x4),
-        preselect = userAnswers[question.id] ?: DEFAULT_ANSWER,
         toNextQuestion = if (questionIdx != questions.lastIndex) toNextQuestion else null
     )
-
-    Spacer(Modifier.weight(1f))
 }

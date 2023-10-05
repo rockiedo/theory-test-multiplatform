@@ -2,11 +2,12 @@ package com.rdev.tt.ui.question
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -14,15 +15,7 @@ import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
-import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
-import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -33,73 +26,73 @@ import com.rdev.tt.core_model.Category
 import com.rdev.tt.core_model.Question
 import com.rdev.tt.ui.components.CustomImage
 
-private val Indexers = listOf("A.", "B.", "C.", "D.")
+private val indexers = listOf("A.", "B.", "C.", "D.")
 
-@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
-@Composable
-fun QuestionComp(
+fun LazyListScope.renderQuestion(
     questionIndex: Int,
     question: Question,
     category: @Category String,
+    selection: Int,
+    isCompactScreen: Boolean,
     onAnswer: (questionId: Long, answerIdx: Int) -> Unit,
     modifier: Modifier = Modifier,
-    preselect: Int = -1,
     toNextQuestion: (() -> Unit)? = null
 ) {
-    var selection by remember(question, preselect) { mutableStateOf(preselect) }
     val hasUserInput = selection != -1
-    val windowSizeClass = calculateWindowSizeClass().widthSizeClass
 
-    Column(
-        modifier,
-        horizontalAlignment = Alignment.Start
-    ) {
+    item {
         Text(
             "${questionIndex + 1}. ${question.question}",
-            style = MaterialTheme.typography.titleMedium
+            style = MaterialTheme.typography.titleMedium,
+            modifier = modifier
         )
+    }
 
-        if (isValidImageName(question.image)) {
-            if (windowSizeClass == WindowWidthSizeClass.Compact) {
+    if (isValidImageName(question.image)) {
+        item {
+            if (isCompactScreen) {
                 Spacer(Modifier.height(Spacing.x4))
             } else {
                 Spacer(Modifier.height(Spacing.x6))
             }
+        }
 
+        item {
             CustomImage(
                 question.image!!,
                 category,
-                Modifier.fillMaxWidth().height(250.dp)
+                modifier.fillMaxWidth().height(250.dp)
             )
         }
+    }
 
-        if (windowSizeClass == WindowWidthSizeClass.Compact) {
+    item {
+        if (isCompactScreen) {
             Spacer(Modifier.height(Spacing.x4))
         } else {
             Spacer(Modifier.height(Spacing.x6))
         }
-
-        question.choices.forEachIndexed { index, choice ->
-            ChoiceComp(
-                indexer = Indexers[index],
-                content = choice,
-                choiceState = when {
-                    index == question.answerIdx -> ChoiceState.Correct
-                    index == selection && index != question.answerIdx -> ChoiceState.Incorrect
-                    else -> ChoiceState.Neutral
-                },
-                shouldHighlight = hasUserInput,
-                onClick = {
-                    selection = index
-                    onAnswer(question.id, index)
-                },
-                modifier = Modifier.fillMaxWidth().padding(bottom = Spacing.x4),
-                toNextQuestion = toNextQuestion
-            )
-        }
-
-        Spacer(modifier.height(Spacing.x6))
     }
+
+    itemsIndexed(question.choices) { index, choice ->
+        ChoiceComp(
+            indexer = indexers[index],
+            content = choice,
+            choiceState = when {
+                index == question.answerIdx -> ChoiceState.Correct
+                index == selection && index != question.answerIdx -> ChoiceState.Incorrect
+                else -> ChoiceState.Neutral
+            },
+            shouldHighlight = hasUserInput,
+            onClick = {
+                onAnswer(question.id, index)
+            },
+            modifier = modifier.fillMaxWidth().padding(bottom = Spacing.x4),
+            toNextQuestion = toNextQuestion
+        )
+    }
+
+    item { Spacer(modifier.height(Spacing.x6)) }
 }
 
 private enum class ChoiceState {

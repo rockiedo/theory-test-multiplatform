@@ -5,12 +5,9 @@ import androidx.compose.animation.expandIn
 import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
@@ -38,7 +35,7 @@ import com.rdev.tt._utils.koinViewModel
 import com.rdev.tt.core_model.Category
 import com.rdev.tt.core_model.Question
 import com.rdev.tt.core_model.Suite
-import com.rdev.tt.ui.question.QuestionComp
+import com.rdev.tt.ui.question.renderQuestion
 import kotlinx.coroutines.launch
 
 @Composable
@@ -82,7 +79,10 @@ fun TestSuiteCompactScreen(
 
 private const val DEFAULT_ANSWER = -1
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
+@OptIn(
+    ExperimentalFoundationApi::class,
+    ExperimentalMaterial3Api::class,
+)
 @Composable
 private fun TestSuiteCompactComp(
     suite: Suite,
@@ -130,25 +130,28 @@ private fun TestSuiteCompactComp(
         HorizontalPager(pagerState) { questionIdx ->
             val question = questions[questionIdx]
 
-            QuestionComp(
-                questionIdx,
-                question,
-                category,
-                onAnswer = { questionId, answerIdx ->
-                    userAnswers[questionId] = answerIdx
-                },
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding)
-                    .padding(horizontal = Spacing.x4),
-                preselect = userAnswers[question.id] ?: DEFAULT_ANSWER,
-                toNextQuestion = {
-                    if (questionIdx >= questions.lastIndex) return@QuestionComp
-                    coroutineScope.launch {
-                        pagerState.scrollToPage(pagerState.currentPage + 1)
+            LazyColumn {
+                renderQuestion(
+                    questionIndex = questionIdx,
+                    question = question,
+                    category = category,
+                    selection = userAnswers[question.id] ?: DEFAULT_ANSWER,
+                    isCompactScreen = true,
+                    onAnswer = { questionId, answerIdx ->
+                        userAnswers[questionId] = answerIdx
+                    },
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding)
+                        .padding(horizontal = Spacing.x4),
+                    toNextQuestion = {
+                        if (questionIdx >= questions.lastIndex) return@renderQuestion
+                        coroutineScope.launch {
+                            pagerState.scrollToPage(pagerState.currentPage + 1)
+                        }
                     }
-                }
-            )
+                )
+            }
         }
     }
 }
