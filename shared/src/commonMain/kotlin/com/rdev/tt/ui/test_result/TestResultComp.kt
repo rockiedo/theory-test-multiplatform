@@ -1,5 +1,6 @@
 package com.rdev.tt.ui.test_result
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,6 +17,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -29,7 +31,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.rdev.tt.AppNavItem
@@ -41,7 +42,7 @@ private const val DEFAULT_ANSWER = -1
 
 @OptIn(
     ExperimentalMaterial3WindowSizeClassApi::class,
-    ExperimentalMaterial3Api::class
+    ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class
 )
 @Composable
 fun TestResultScreen(
@@ -77,6 +78,29 @@ fun TestResultScreen(
                         IconButton(onClick = onClose) {
                             Icon(Icons.Filled.Close, null)
                         }
+                    },
+                    actions = {
+                        val canExpandAll = expansionState.size < sortedQuestions.size
+
+                        if (canExpandAll) {
+                            IconButton(
+                                onClick = {
+                                    sortedQuestions.forEach { question ->
+                                        if (question.id !in expansionState) {
+                                            expansionState.add(question.id)
+                                        }
+                                    }
+                                }
+                            ) {
+                                Icon(Icons.Filled.ExpandMore, null)
+                            }
+                        } else {
+                            IconButton(
+                                onClick = { expansionState.clear() }
+                            ) {
+                                Icon(Icons.Filled.ExpandLess, null)
+                            }
+                        }
                     }
                 )
             }
@@ -90,6 +114,13 @@ fun TestResultScreen(
             }
 
             sortedQuestions.forEachIndexed { index, question ->
+                val isWrongAnswer = navItem.userAnswers[question.id] != question.answerIdx
+                val questionColor = if (isWrongAnswer) {
+                    Color(0xffff1430)
+                } else {
+                    Color.Unspecified
+                }
+
                 if (question.id in expansionState) {
                     this@LazyColumn.renderQuestion(
                         questionIndex = defaultIndices[question.id]!!,
@@ -98,6 +129,7 @@ fun TestResultScreen(
                         selection = navItem.userAnswers[question.id] ?: DEFAULT_ANSWER,
                         isCompactScreen = isCompactScreen,
                         modifier = Modifier.fillMaxWidth().padding(horizontal = Spacing.x4),
+                        questionColor = questionColor,
                         onAnswer = { _, _ -> },
                     )
 
@@ -112,19 +144,13 @@ fun TestResultScreen(
                         }
                     }
                 } else {
-                    val isWrongAnswer = navItem.userAnswers[question.id] != question.answerIdx
-                    val contentColor = if (isWrongAnswer) {
-                        Color(0xffff1430)
-                    } else {
-                        Color.Unspecified
-                    }
-
-                    item {
+                    stickyHeader {
                         ListItem(
                             headlineContent = {
                                 Text(
                                     "${defaultIndices[question.id]!! + 1}. ${question.question}",
-                                    color = contentColor
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = questionColor
                                 )
                             },
                             trailingContent = {

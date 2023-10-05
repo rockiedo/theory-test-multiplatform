@@ -21,6 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.rdev.tt._utils.ExtendedColorScheme
 import com.rdev.tt._utils.Spacing
@@ -40,6 +41,7 @@ fun LazyListScope.renderQuestion(
     isCompactScreen: Boolean,
     onAnswer: (questionId: Long, answerIdx: Int) -> Unit,
     modifier: Modifier = Modifier,
+    questionColor: Color = Color.Unspecified,
     toNextQuestion: (() -> Unit)? = null
 ) {
     val hasUserInput = selection != -1
@@ -52,7 +54,8 @@ fun LazyListScope.renderQuestion(
             Text(
                 "${questionIndex + 1}. ${question.question}",
                 style = MaterialTheme.typography.titleMedium,
-                modifier = modifier.padding(top = Spacing.x4, bottom = Spacing.x)
+                modifier = modifier.padding(top = Spacing.x4, bottom = Spacing.x),
+                color = questionColor
             )
         }
     }
@@ -70,7 +73,7 @@ fun LazyListScope.renderQuestion(
             CustomImage(
                 question.image!!,
                 category,
-                Modifier.fillMaxWidth().height(250.dp)
+                Modifier.fillMaxWidth().height(250.dp).padding(horizontal = Spacing.x4)
             )
         }
     }

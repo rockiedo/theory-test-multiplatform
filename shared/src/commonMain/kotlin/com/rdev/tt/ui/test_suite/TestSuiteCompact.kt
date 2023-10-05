@@ -15,9 +15,9 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronLeft
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
@@ -128,7 +128,7 @@ private fun TestSuiteCompactComp(
                 visible = userAnswers.size == questions.size,
                 enter = fadeIn() + expandIn { IntSize(width = 1, height = 1) }
             ) {
-                FloatingActionButton(
+                Button(
                     onClick = { openResult(userAnswers) },
                 ) {
                     Text("Review")
