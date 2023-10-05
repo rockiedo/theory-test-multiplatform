@@ -4,6 +4,7 @@
     <application
         android:name=".TheoryTestApplication"
         android:allowBackup="false"
+        android:label="Theory Test"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
