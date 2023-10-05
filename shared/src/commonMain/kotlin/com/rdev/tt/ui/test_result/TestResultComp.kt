@@ -20,11 +20,14 @@ import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSiz
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.rdev.tt.AppNavItem
 import com.rdev.tt._utils.Spacing
+import com.rdev.tt.core_model.Question
 import com.rdev.tt.ui.question.renderQuestion
 
 private const val DEFAULT_ANSWER = -1
@@ -40,6 +43,15 @@ fun TestResultScreen(
     modifier: Modifier = Modifier
 ) {
     val isCompactScreen = calculateWindowSizeClass().widthSizeClass == WindowWidthSizeClass.Compact
+    val defaultIndices = remember {
+        mutableMapOf<Long, Int>().apply {
+            navItem.questions.forEachIndexed { index, question ->
+                put(question.id, index)
+            }
+        }
+    }
+    val sortedQuestions = remember { sortTestResult(navItem) }
+    val expansionState = remember { mutableStateListOf<Int>() }
 
     Scaffold(
         modifier,
@@ -70,9 +82,9 @@ fun TestResultScreen(
                 }
             }
 
-            navItem.questions.forEachIndexed { index, question ->
+            sortedQuestions.forEachIndexed { index, question ->
                 this@LazyColumn.renderQuestion(
-                    questionIndex = index,
+                    questionIndex = defaultIndices[question.id]!!,
                     question = question,
                     category = navItem.category,
                     selection = navItem.userAnswers[question.id] ?: DEFAULT_ANSWER,
@@ -96,6 +108,24 @@ fun TestResultScreen(
                     Spacer(Modifier.height(space))
                 }
             }
+        }
+    }
+}
+
+private fun sortTestResult(result: AppNavItem.TestResult): List<Question> {
+    val defaultOrder = mutableMapOf<Long, Int>()
+    result.questions.forEachIndexed { index, question ->
+        defaultOrder[question.id] = index
+    }
+
+    return result.questions.sortedWith { a, b ->
+        val aIncorrect = result.userAnswers[a.id] != a.answerIdx
+        val bIncorrect = result.userAnswers[b.id] != b.answerIdx
+
+        when {
+            aIncorrect && !bIncorrect -> -1
+            !aIncorrect && bIncorrect -> 1
+            else -> defaultOrder[a.id]!! - defaultOrder[b.id]!!
         }
     }
 }
