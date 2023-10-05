@@ -1,6 +1,7 @@
 package com.rdev.tt.ui.suite_list
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -22,8 +23,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.rdev.tt._utils.ExtendedColorScheme
 import com.rdev.tt._utils.Spacing
 import com.rdev.tt._utils.koinViewModel
 import com.rdev.tt.core_model.Suite
@@ -75,6 +76,11 @@ private fun SuiteListComp(
 ) {
     val isCompactScreen = calculateWindowSizeClass().widthSizeClass == WindowWidthSizeClass.Compact
     val itemShape = RoundedCornerShape(16)
+    val customScheme = if (isSystemInDarkTheme()) {
+        ExtendedColorScheme.Light
+    } else {
+        ExtendedColorScheme.Dark
+    }
 
     LazyColumn(modifier) {
         if (!isCompactScreen) {
@@ -87,7 +93,10 @@ private fun SuiteListComp(
             ListItem(
                 overlineContent = {
                     if (item.learnedQuestionCount == item.questionCount) {
-                        Badge(containerColor = Color(0xFF6BDF6A)) {
+                        Badge(
+                            containerColor = customScheme.background,
+                            contentColor = customScheme.onBackground
+                        ) {
                             Text("Complete")
                         }
                     }

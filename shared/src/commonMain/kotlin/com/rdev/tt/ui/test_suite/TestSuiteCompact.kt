@@ -70,6 +70,7 @@ fun TestSuiteCompactScreen(
                     suite,
                     content.questions,
                     category,
+                    viewModel,
                     modifier,
                     onBackPress,
                     openResult = { answers ->
@@ -92,6 +93,7 @@ private fun TestSuiteCompactComp(
     suite: Suite,
     questions: List<Question>,
     category: @Category String,
+    viewModel: TestSuiteViewModel,
     modifier: Modifier = Modifier,
     onBackPress: () -> Unit = {},
     openResult: (Map<Long, Int>) -> Unit = {}
@@ -148,6 +150,13 @@ private fun TestSuiteCompactComp(
                     selection = userAnswers[question.id] ?: DEFAULT_ANSWER,
                     isCompactScreen = true,
                     onAnswer = { questionId, answerIdx ->
+                        val correctAnswerIdx =
+                            questions.firstOrNull { it.id == questionId }?.answerIdx
+                        viewModel.recordAnswer(
+                            questionId,
+                            answerIdx == correctAnswerIdx
+                        )
+
                         userAnswers[questionId] = answerIdx
                     },
                     modifier = Modifier
