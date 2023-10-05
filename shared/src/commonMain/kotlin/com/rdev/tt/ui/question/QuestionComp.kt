@@ -40,6 +40,8 @@ fun LazyListScope.renderQuestion(
 ) {
     val hasUserInput = selection != -1
 
+    item { Spacer(Modifier.height(Spacing.x4)) }
+
     item {
         Text(
             "${questionIndex + 1}. ${question.question}",
@@ -61,7 +63,7 @@ fun LazyListScope.renderQuestion(
             CustomImage(
                 question.image!!,
                 category,
-                modifier.fillMaxWidth().height(250.dp)
+                Modifier.fillMaxWidth().height(250.dp)
             )
         }
     }
@@ -87,7 +89,9 @@ fun LazyListScope.renderQuestion(
             onClick = {
                 onAnswer(question.id, index)
             },
-            modifier = modifier.fillMaxWidth().padding(bottom = Spacing.x4),
+            modifier = Modifier.fillMaxWidth()
+                .padding(horizontal = Spacing.x4)
+                .padding(top = 0.dp, bottom = Spacing.x4),
             toNextQuestion = toNextQuestion
         )
     }

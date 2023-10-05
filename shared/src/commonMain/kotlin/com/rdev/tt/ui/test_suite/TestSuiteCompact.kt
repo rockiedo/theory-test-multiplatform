@@ -4,8 +4,11 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandIn
 import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.HorizontalPager
@@ -18,6 +21,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -26,17 +30,17 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.dp
 import com.rdev.tt._utils.Spacing
 import com.rdev.tt._utils.koinViewModel
 import com.rdev.tt.core_model.Category
 import com.rdev.tt.core_model.Question
 import com.rdev.tt.core_model.Suite
 import com.rdev.tt.ui.question.renderQuestion
-import kotlinx.coroutines.launch
 
 @Composable
 fun TestSuiteCompactScreen(
@@ -92,27 +96,30 @@ private fun TestSuiteCompactComp(
     onBackPress: () -> Unit = {},
     openResult: (Map<Long, Int>) -> Unit = {}
 ) {
-    val coroutineScope = rememberCoroutineScope()
     val userAnswers = remember { mutableStateMapOf<Long, Int>() }
     val pagerState = rememberPagerState(pageCount = { questions.size })
 
     Scaffold(
         modifier,
         topBar = {
-            TopAppBar(
-                title = { Text(suite.name) },
-                navigationIcon = {
-                    IconButton(onClick = onBackPress) {
-                        Icon(Icons.Filled.ChevronLeft, null)
-                    }
-                },
-                actions = {
-                    Text(
-                        "${pagerState.currentPage + 1} / ${questions.size}",
-                        Modifier.padding(end = Spacing.x4)
-                    )
-                }
-            )
+            Surface(shadowElevation = 2.dp) {
+                TopAppBar(
+                    title = {
+                        Text(suite.name, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                    },
+                    navigationIcon = {
+                        IconButton(onClick = onBackPress) {
+                            Icon(Icons.Filled.ChevronLeft, null)
+                        }
+                    },
+                    actions = {
+                        Text(
+                            "${pagerState.currentPage + 1} / ${questions.size}",
+                            Modifier.padding(end = Spacing.x4)
+                        )
+                    },
+                )
+            }
         },
         floatingActionButton = {
             AnimatedVisibility(
@@ -127,10 +134,13 @@ private fun TestSuiteCompactComp(
             }
         }
     ) { innerPadding ->
-        HorizontalPager(pagerState) { questionIdx ->
+        HorizontalPager(
+            pagerState,
+            modifier = Modifier.fillMaxHeight().padding(innerPadding)
+        ) { questionIdx ->
             val question = questions[questionIdx]
 
-            LazyColumn {
+            LazyColumn(verticalArrangement = Arrangement.Top, modifier = Modifier.fillMaxSize()) {
                 renderQuestion(
                     questionIndex = questionIdx,
                     question = question,
@@ -141,15 +151,9 @@ private fun TestSuiteCompactComp(
                         userAnswers[questionId] = answerIdx
                     },
                     modifier = Modifier
-                        .fillMaxSize()
-                        .padding(innerPadding)
+                        .fillMaxWidth()
                         .padding(horizontal = Spacing.x4),
-                    toNextQuestion = {
-                        if (questionIdx >= questions.lastIndex) return@renderQuestion
-                        coroutineScope.launch {
-                            pagerState.scrollToPage(pagerState.currentPage + 1)
-                        }
-                    }
+                    toNextQuestion = null
                 )
             }
         }
