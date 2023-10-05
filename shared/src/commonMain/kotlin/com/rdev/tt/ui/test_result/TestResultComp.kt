@@ -185,6 +185,8 @@ fun TestResultScreen(
 }
 
 private fun sortTestResult(result: AppNavItem.TestResult): List<Question> {
+    return result.questions
+
     val defaultOrder = mutableMapOf<Long, Int>()
     result.questions.forEachIndexed { index, question ->
         defaultOrder[question.id] = index
