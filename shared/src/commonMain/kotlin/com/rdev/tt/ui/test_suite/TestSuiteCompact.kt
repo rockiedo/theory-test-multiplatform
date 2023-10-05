@@ -102,7 +102,7 @@ private fun TestSuiteCompactComp(
     Scaffold(
         modifier,
         topBar = {
-            Surface(shadowElevation = 2.dp) {
+            Surface(shadowElevation = 8.dp) {
                 TopAppBar(
                     title = {
                         Text(suite.name, maxLines = 1, overflow = TextOverflow.Ellipsis)

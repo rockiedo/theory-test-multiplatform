@@ -2,6 +2,7 @@ package com.rdev.tt.ui.question
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -18,8 +19,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.rdev.tt._utils.ExtendedColorScheme
 import com.rdev.tt._utils.Spacing
 import com.rdev.tt._utils.isValidImageName
 import com.rdev.tt.core_model.Category
@@ -116,17 +117,31 @@ private fun ChoiceComp(
     modifier: Modifier = Modifier,
     toNextQuestion: (() -> Unit)? = null
 ) {
+    val baseScheme = MaterialTheme.colorScheme
+    val customScheme = if (isSystemInDarkTheme()) {
+        ExtendedColorScheme.Light
+    } else {
+        ExtendedColorScheme.Dark
+    }
     val shape = RoundedCornerShape(16)
-    val backgroundColor = when {
-        !shouldHighlight -> MaterialTheme.colorScheme.background
-        choiceState == ChoiceState.Correct -> Color(0xFF6BDF6A)
-        choiceState == ChoiceState.Incorrect -> Color(0xFFFFB4AB)
-        else -> MaterialTheme.colorScheme.background
+
+    val (backgroundColor, onBackgroundColor, border) = when {
+        shouldHighlight && choiceState == ChoiceState.Correct -> {
+            Triple(customScheme.background, customScheme.onBackground, customScheme.border)
+        }
+
+        shouldHighlight && choiceState == ChoiceState.Incorrect -> {
+            Triple(baseScheme.error, baseScheme.onError, baseScheme.errorContainer)
+        }
+
+        else -> {
+            Triple(baseScheme.background, baseScheme.onBackground, baseScheme.onBackground)
+        }
     }
 
     var cascadingModifier = modifier
         .clip(shape)
-        .border(width = 1.dp, color = Color.LightGray, shape)
+        .border(width = 1.dp, shape = shape, color = border)
 
     if (!shouldHighlight) {
         cascadingModifier = cascadingModifier
@@ -149,7 +164,11 @@ private fun ChoiceComp(
                 }
             }
         },
-        colors = ListItemDefaults.colors(containerColor = backgroundColor),
+        colors = ListItemDefaults.colors(
+            containerColor = backgroundColor,
+            headlineColor = onBackgroundColor,
+            overlineColor = onBackgroundColor
+        ),
         modifier = cascadingModifier
     )
 }

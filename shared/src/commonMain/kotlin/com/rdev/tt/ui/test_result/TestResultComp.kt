@@ -63,7 +63,7 @@ fun TestResultScreen(
     Scaffold(
         modifier,
         topBar = {
-            Surface(shadowElevation = 2.dp) {
+            Surface(shadowElevation = 8.dp) {
                 TopAppBar(
                     title = {
                         Text(

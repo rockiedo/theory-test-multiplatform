@@ -23,4 +23,9 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
+    @Deprecated("Deprecated in Java")
+    override fun onBackPressed() {
+        // Ignored back gesture
+    }
 }
