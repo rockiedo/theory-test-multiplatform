@@ -90,7 +90,7 @@ private fun SuiteListComp(
                     Text("Learned ${item.learnedQuestionCount} / ${item.questionCount}")
                 },
                 modifier = Modifier
-                    .padding(horizontal = Spacing.x4, vertical = Spacing.x2)
+                    .padding(vertical = Spacing.x2)
                     .clip(itemShape)
                     .clickable { onClick(item.suite) }
             )
