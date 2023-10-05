@@ -1,5 +1,6 @@
 package com.rdev.tt.ui.question
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -15,6 +16,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -29,6 +31,7 @@ import com.rdev.tt.ui.components.CustomImage
 
 private val indexers = listOf("A.", "B.", "C.", "D.")
 
+@OptIn(ExperimentalFoundationApi::class)
 fun LazyListScope.renderQuestion(
     questionIndex: Int,
     question: Question,
@@ -41,14 +44,17 @@ fun LazyListScope.renderQuestion(
 ) {
     val hasUserInput = selection != -1
 
-    item { Spacer(Modifier.height(Spacing.x4)) }
-
-    item {
-        Text(
-            "${questionIndex + 1}. ${question.question}",
-            style = MaterialTheme.typography.titleMedium,
-            modifier = modifier
-        )
+    stickyHeader {
+        Surface(
+            Modifier.fillMaxWidth(),
+            color = MaterialTheme.colorScheme.background
+        ) {
+            Text(
+                "${questionIndex + 1}. ${question.question}",
+                style = MaterialTheme.typography.titleMedium,
+                modifier = modifier.padding(top = Spacing.x4, bottom = Spacing.x)
+            )
+        }
     }
 
     if (isValidImageName(question.image)) {
