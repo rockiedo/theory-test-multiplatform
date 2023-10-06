@@ -153,20 +153,77 @@ private suspend fun findUnusedAndNotFoundImages(
 }
 
 @OptIn(ExperimentalSerializationApi::class)
+private suspend fun unifyImages(
+    inputPath: String,
+    destPath: String,
+    reportPath: String,
+    json: Json
+) {
+    val inputDir = File(inputPath)
+    val destDir = File(destPath)
+
+    if (!inputDir.exists() || !destDir.exists()) {
+        throw IllegalStateException("Directories do not exist.")
+    }
+
+    val duplicates = mutableListOf<String>()
+
+    inputDir.listFiles()?.asSequence()?.forEach { file ->
+            val destFile = File("$destPath/${file.name}")
+
+            if (destFile.exists()) {
+                duplicates.add(file.name)
+            } else {
+                file.copyTo(destFile)
+            }
+        }
+
+    val reportFile = File(reportPath)
+    withContext(Dispatchers.IO) {
+        json.encodeToStream(duplicates, FileOutputStream(reportFile))
+    }
+}
+
+private fun copyUsedImages(imageList: Set<String>, sourcePath: String, destPath: String) {
+    val sourceDir = File(sourcePath)
+    val destDir = File(destPath)
+
+    if (!sourceDir.exists() || !destDir.exists()) {
+        throw IllegalStateException("Directories do not exist.")
+    }
+
+    sourceDir.listFiles()?.filter { it.nameWithoutExtension in imageList }?.asSequence()?.forEach { file ->
+        val destFile = File("$destPath/${file.name}")
+        file.copyTo(destFile)
+    }
+}
+
+@OptIn(ExperimentalSerializationApi::class)
 fun cliScript() = runBlocking {
     startKoin {
         modules(dataModule)
     }
     val json = KoinPlatformTools.defaultContext().get().get<Json>()
 
+//    unifyImages(
+//        ".assets/ftt/images",
+//        ".assets/images",
+//        ".assets/fileCopyReport.json",
+//        json
+//    )
+//    return@runBlocking
+
     val inputFile = File(".assets/images.json")
     val requestedImages = withContext(Dispatchers.IO) {
         json.decodeFromStream<List<Image>>(FileInputStream(inputFile)).map { it.name }.toSet()
     }
 
-    val imageUsage = findUnusedAndNotFoundImages(requestedImages, ".assets/btt")
+    copyUsedImages(requestedImages, ".assets/all-images", ".assets/images")
+    return@runBlocking
 
-    val outputFile = File(".assets/imageReport.json")
+    val imageUsage = findUnusedAndNotFoundImages(requestedImages, ".assets/images")
+
+    val outputFile = File(".assets/imageUsageReport.json")
     withContext(Dispatchers.IO) {
         json.encodeToStream(imageUsage, FileOutputStream(outputFile))
     }
