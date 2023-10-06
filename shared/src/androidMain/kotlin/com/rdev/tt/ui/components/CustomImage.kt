@@ -23,5 +23,5 @@ actual fun CustomImage(
 }
 
 private fun getImageFilePath(imageName: String, category: @Category String): String {
-    return "file:///android_asset/$category/images/$imageName.webp"
+    return "file:///android_asset/images/$imageName.webp"
 }
