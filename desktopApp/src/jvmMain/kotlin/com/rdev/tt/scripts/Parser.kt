@@ -1,4 +1,4 @@
-package com.rdev.tt.desktop
+package com.rdev.tt.scripts
 
 import com.rdev.tt.data.dataModule
 import com.rdev.tt.data.database.AppDb
@@ -6,40 +6,14 @@ import com.rdev.tt.data.database.QuestionEntity
 import com.rdev.tt.data.database.QuestionSuiteEntity
 import kotlinx.coroutines.*
 import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
+import kotlinx.serialization.json.encodeToStream
 import org.koin.core.context.startKoin
 import org.koin.mp.KoinPlatformTools
 import java.io.File
 import java.io.FileInputStream
-
-@Serializable
-private data class QuestionJson(
-    @SerialName("question")
-    val question: String,
-    @SerialName("answer")
-    val answer: Long,
-    @SerialName("choice0")
-    val firstChoice: String,
-    @SerialName("choice1")
-    val secondChoice: String,
-    @SerialName("choice2")
-    val thirdChoice: String,
-    @SerialName("explaination")
-    val explanation: String,
-    @SerialName("imageName")
-    val image: String
-)
-
-@Serializable
-private data class TestSuiteJson(
-    @SerialName("type")
-    val name: String,
-    @SerialName("questions")
-    val questions: List<QuestionJson>
-)
+import java.io.FileOutputStream
 
 private suspend fun process(
     input: String,
@@ -61,6 +35,28 @@ private suspend fun process(
     }
 
     return jobs
+}
+
+private suspend fun processDb(scope: CoroutineScope) {
+    startKoin {
+        modules(dataModule)
+    }
+
+    val db = KoinPlatformTools.defaultContext().get().get<AppDb>()
+    val json = KoinPlatformTools.defaultContext().get().get<Json>()
+
+    val suiteStoreHelper = SuiteStoreHelper(
+        db = db,
+        categories = listOf("ftt", "practice"),
+        genSuiteName = { name, index ->
+            name
+        }
+    )
+    val jobs = parseAndSave(
+        File(".assets/input/ftt/practice.json"), json, scope, suiteStoreHelper
+    )
+
+    jobs.joinAll()
 }
 
 @OptIn(ExperimentalSerializationApi::class)
@@ -120,24 +116,58 @@ private class SuiteStoreHelper(
     }
 }
 
-fun main() = runBlocking {
+@Suppress("RedundantSuspendModifier")
+private suspend fun findUnusedAndNotFoundImages(
+    requestedImages: Set<String>,
+    imageDir: String
+): ImageUsage {
+    val file = File(imageDir)
+    if (!file.exists() || !file.isDirectory) throw IllegalStateException("Invalid image dir")
+
+    val incorrectFormatImages = mutableSetOf<String>()
+    val unusedImages = mutableSetOf<String>()
+    val usedImages = mutableSetOf<String>()
+
+    file.listFiles()
+        .asSequence()
+        .map { it.name }
+        .forEach { img ->
+            val name = img.split(".").first()
+
+            if (!img.endsWith(".webp")) {
+                incorrectFormatImages.add(img)
+            } else {
+                if (name !in requestedImages) {
+                    unusedImages.add(img)
+                } else {
+                    usedImages.add(name)
+                }
+            }
+        }
+
+    return ImageUsage(
+        unusedImages = unusedImages.toList(),
+        notFoundImages = requestedImages.subtract(usedImages).toList(),
+        incorrectFormatImages = incorrectFormatImages.toList()
+    )
+}
+
+@OptIn(ExperimentalSerializationApi::class)
+fun cliScript() = runBlocking {
     startKoin {
         modules(dataModule)
     }
-
-    val db = KoinPlatformTools.defaultContext().get().get<AppDb>()
     val json = KoinPlatformTools.defaultContext().get().get<Json>()
 
-    val suiteStoreHelper = SuiteStoreHelper(
-        db =  db,
-        categories = listOf("ftt", "practice"),
-        genSuiteName = { name, index ->
-            name
-        }
-    )
-    val jobs = parseAndSave(
-        File(".assets/input/ftt/practice.json"), json, this, suiteStoreHelper
-    )
+    val inputFile = File(".assets/images.json")
+    val requestedImages = withContext(Dispatchers.IO) {
+        json.decodeFromStream<List<Image>>(FileInputStream(inputFile)).map { it.name }.toSet()
+    }
 
-    jobs.joinAll()
+    val imageUsage = findUnusedAndNotFoundImages(requestedImages, ".assets/btt")
+
+    val outputFile = File(".assets/imageReport.json")
+    withContext(Dispatchers.IO) {
+        json.encodeToStream(imageUsage, FileOutputStream(outputFile))
+    }
 }
