@@ -1,12 +1,12 @@
 [versions]
-kotlin = "1.9.0"
+kotlin = "1.9.10"
 agp = "8.1.2"
-compose = "1.5.1"
+compose = "1.5.3"
 coroutines = "1.7.3"
 ktor = "2.3.3"
 logback = "1.3.11"
 sqlDelight = "2.0.0"
-dateTime = "0.4.0"
+dateTime = "0.4.1"
 koin = "3.4.3"
 mokoMvvmVersion = "0.16.1"
 windowSizeClass = "0.3.0"
@@ -21,8 +21,8 @@ androidxComposeUiTooling = { module = "androidx.compose.ui:ui-tooling", version.
 androidxComposeUiToolingPreview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "compose" }
 androidxActivityCompose = { module = "androidx.activity:activity-compose", version = "1.7.2" }
 androidxAppcompat = { module = "androidx.appcompat:appcompat", version = "1.6.1" }
-androidxCoreKtx = { module = "androidx.core:core-ktx", version = "1.10.1" }
-kotlinSerialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version = "1.5.1" }
+androidxCoreKtx = { module = "androidx.core:core-ktx", version = "1.12.0" }
+kotlinSerialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version = "1.6.0" }
 coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 coroutinesAndroid = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
 coroutinesJvm = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "coroutines" }

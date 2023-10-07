@@ -19,5 +19,5 @@ class NavController<T>(initial: T) {
 
 @Composable
 inline fun <reified T> rememberNavController(initial: T): NavController<T> {
-    return remember(T::class.java) { NavController(initial) }
+    return remember(T::class) { NavController(initial) }
 }

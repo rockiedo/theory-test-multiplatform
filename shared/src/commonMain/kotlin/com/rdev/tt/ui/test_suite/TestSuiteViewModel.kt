@@ -22,7 +22,7 @@ class TestSuiteViewModel(
     val uiState: StateFlow<TestSuiteState> = _uiState
 
     fun loadTestSuite(suiteId: Long) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.Default) {
             runCatching {
                 val questions = appRepo.loadQuestionFromSuite(suiteId).getOrThrow()
                 if (questions.isEmpty()) throw IllegalStateException("Empty question list")
