@@ -32,7 +32,7 @@ sealed interface AppNavItem {
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
 fun TheoryTestApp() {
-    val navController = rememberNavController<AppNavItem>(AppNavItem.SuiteList)
+    val navController = rememberNavController(AppNavItem::class, AppNavItem.SuiteList)
     val currentNavItem = navController.currentNavItem
 
     Box(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {

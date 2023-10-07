@@ -50,7 +50,7 @@ fun TestSuiteScreen(
     onBackPress: () -> Unit,
     openResult: (List<Question>, Map<Long, Int>) -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: TestSuiteViewModel = koinViewModel()
+    viewModel: TestSuiteViewModel = koinViewModel(TestSuiteViewModel::class)
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var currentQuestion by remember { mutableStateOf(0) }

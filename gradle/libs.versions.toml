@@ -40,13 +40,13 @@ koinCore = { module = "io.insert-koin:koin-core", version.ref = "koin" }
 koinAndroid = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 mokoMvvmCompose = { module = "dev.icerock.moko:mvvm-compose", version.ref = "mokoMvvmVersion" }
 mokoMvvmCore = { module = "dev.icerock.moko:mvvm-core", version.ref = "mokoMvvmVersion" }
-mokoMvvmClow = { module = "dev.icerock.moko:mvvm-flow", version.ref = "mokoMvvmVersion" }
-mokoMvvmClow-compose = { module = "dev.icerock.moko:mvvm-flow-compose", version.ref = "mokoMvvmVersion" }
+mokoMvvmFlow = { module = "dev.icerock.moko:mvvm-flow", version.ref = "mokoMvvmVersion" }
+mokoMvvmFlow-compose = { module = "dev.icerock.moko:mvvm-flow-compose", version.ref = "mokoMvvmVersion" }
 sqlDelightAndroid = { module = "app.cash.sqldelight:android-driver", version.ref = "sqlDelight" }
 sqlDelightNative = { module = "app.cash.sqldelight:native-driver", version.ref = "sqlDelight" }
 sqlDelightJvm = { module = "app.cash.sqldelight:sqlite-driver", version.ref = "sqlDelight" }
 windowSizeClass = { module = "dev.chrisbanes.material3:material3-window-size-class-multiplatform", version.ref = "windowSizeClass" }
-settings = { module = "com.russhwolf:multiplatform-settings" , version.ref = "settings" }
+settings = { module = "com.russhwolf:multiplatform-settings", version.ref = "settings" }
 coilCompose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
 
 [bundles]
@@ -70,13 +70,14 @@ ktor = [
 mokoMvvm = [
     "mokoMvvmCore",
     "mokoMvvmCompose",
-    "mokoMvvmClow",
-    "mokoMvvmClow-compose",
+    "mokoMvvmFlow",
+    "mokoMvvmFlow-compose",
 ]
 
 [plugins]
 jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+nativeCocoaPods = { id = "org.jetbrains.kotlin.native.cocoapods", version.ref = "kotlin" }
 kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 compose = { id = "org.jetbrains.compose", version.ref = "compose" }
 android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }

@@ -5,6 +5,7 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlin.reflect.KClass
 
 @Stable
 class NavController<T>(initial: T) {
@@ -18,6 +19,6 @@ class NavController<T>(initial: T) {
 }
 
 @Composable
-inline fun <reified T> rememberNavController(initial: T): NavController<T> {
-    return remember(T::class) { NavController(initial) }
+fun <T: Any> rememberNavController(clazz: KClass<T>, initial: T): NavController<T> {
+    return remember(clazz) { NavController(initial) }
 }

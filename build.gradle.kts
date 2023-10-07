@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.jvm) apply false
     alias(libs.plugins.multiplatform) apply false
+    alias(libs.plugins.nativeCocoaPods) apply false
     alias(libs.plugins.android) apply false
     alias(libs.plugins.androidApplication) apply false
     alias(libs.plugins.androidLibrary) apply false

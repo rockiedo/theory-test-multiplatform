@@ -34,7 +34,7 @@ import com.rdev.tt.core_model.Suite
 fun SuiteListScreen(
     modifier: Modifier = Modifier,
     onSelectSuite: (Suite) -> Unit,
-    viewModel: SuiteListViewModel = koinViewModel()
+    viewModel: SuiteListViewModel = koinViewModel(SuiteListViewModel::class)
 ) {
     val state by viewModel.uiState.collectAsState()
 
