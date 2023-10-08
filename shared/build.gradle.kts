@@ -67,6 +67,7 @@ kotlin {
         val iosMain by getting {
             dependencies {
                 implementation(libs.sqlDelightNative)
+                implementation(libs.sqliter)
             }
             iosX64Main.dependsOn(this)
             iosArm64Main.dependsOn(this)

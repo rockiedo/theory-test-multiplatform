@@ -19,14 +19,15 @@ val dataModule = module {
 
     single {
         val driverFactory = get<DriverFactory>()
+        val driver = driverFactory.createDriver()
+
         val columnMappers = get<ColumnMappers>()
-        AppDb(
-            driverFactory.createDriver(),
-            QuestionEntity.Adapter(
-                choicesAdapter = columnMappers.listToStringMapper,
-                categoriesAdapter = columnMappers.listToStringMapper
-            )
+        val adapter = QuestionEntity.Adapter(
+            choicesAdapter = columnMappers.listToStringMapper,
+            categoriesAdapter = columnMappers.listToStringMapper
         )
+
+        AppDb(driver, adapter)
     }
 
     singleOf(::AppRepository)
