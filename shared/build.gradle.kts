@@ -25,7 +25,6 @@ kotlin {
         podfile = project.file("../iosApp/Podfile")
         framework {
             baseName = "shared"
-            export(libs.bundles.mokoMvvm)
         }
     }
     
