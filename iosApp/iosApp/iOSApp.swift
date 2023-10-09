@@ -4,8 +4,9 @@ import shared
 @main
 struct iOSApp: App {
     init() {
-        let dbPath = extractDb()
-        DiKt.doInitKoin(dbName: "app.db", basePath: dbPath)
+        let dbDir = extractDb()
+        let imageDir = getImageDir()
+        DiKt.doInitKoin(dbName: "app.db", dbDir: dbDir, imageDir: imageDir)
     }
     
 	var body: some Scene {
@@ -42,4 +43,13 @@ func extractDb() -> String {
     }
     
     return outputFile.deletingLastPathComponent().path
+}
+
+func getImageDir() -> String {
+    if let bundlePath = Bundle.main.resourcePath {
+        let imageDir = URL(fileURLWithPath: bundlePath).appendingPathComponent("images")
+        return imageDir.path
+    }
+    
+    return ""
 }

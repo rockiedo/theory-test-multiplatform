@@ -6,11 +6,18 @@ import com.rdev.tt.ui.viewModelModule
 import org.koin.core.context.startKoin
 import org.koin.dsl.module
 
-fun initKoin(dbName: String, basePath: String) {
+fun initKoin(
+    dbName: String,
+    dbDir: String,
+    imageDir: String
+) {
     val dbDriverModule = module {
-        single { DriverFactory(dbName, basePath) }
+        single { DriverFactory(dbName, dbDir) }
+    }
+    val assetModule = module {
+        single { ImagePathProvider(imageDir) }
     }
     startKoin {
-        modules(dbDriverModule, dataModule, viewModelModule)
+        modules(dbDriverModule, assetModule, dataModule, viewModelModule)
     }
 }
