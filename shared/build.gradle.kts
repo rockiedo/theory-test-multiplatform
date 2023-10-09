@@ -68,6 +68,7 @@ kotlin {
             dependencies {
                 implementation(libs.sqlDelightNative)
                 implementation(libs.sqliter)
+                implementation(libs.kamelImage)
             }
             iosX64Main.dependsOn(this)
             iosArm64Main.dependsOn(this)

@@ -13,6 +13,7 @@ mokoMvvmVersion = "0.16.1"
 windowSizeClass = "0.3.0"
 settings = "1.0.0"
 coil = "2.4.0"
+kamel = "0.7.3"
 
 [libraries]
 androidxComposeFoundation = { module = "androidx.compose.foundation:foundation", version.ref = "compose" }
@@ -50,6 +51,7 @@ sqliter = { module = "co.touchlab:sqliter-driver", version.ref = "sqliter" }
 windowSizeClass = { module = "dev.chrisbanes.material3:material3-window-size-class-multiplatform", version.ref = "windowSizeClass" }
 settings = { module = "com.russhwolf:multiplatform-settings", version.ref = "settings" }
 coilCompose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
+kamelImage = { module = "media.kamel:kamel-image", version.ref = "kamel" }
 
 [bundles]
 androidxCompose = [
