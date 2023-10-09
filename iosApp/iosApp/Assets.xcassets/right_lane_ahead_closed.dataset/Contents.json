@@ -1,0 +1,12 @@
+{
+  "data" : [
+    {
+      "filename" : "right_lane_ahead_closed.webp",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}
