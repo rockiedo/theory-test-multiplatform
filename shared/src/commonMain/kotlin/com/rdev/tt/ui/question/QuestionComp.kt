@@ -41,7 +41,7 @@ fun LazyListScope.renderQuestion(
     isCompactScreen: Boolean,
     onAnswer: (questionId: Long, answerIdx: Int) -> Unit,
     modifier: Modifier = Modifier,
-    questionColor: Color = Color.Unspecified,
+    questionColor: @Composable () -> Color = { Color.Unspecified },
     toNextQuestion: (() -> Unit)? = null
 ) {
     val hasUserInput = selection != -1
@@ -55,7 +55,7 @@ fun LazyListScope.renderQuestion(
                 "${questionIndex + 1}. ${question.question}",
                 style = MaterialTheme.typography.titleMedium,
                 modifier = modifier.padding(top = Spacing.x4, bottom = Spacing.x),
-                color = questionColor
+                color = questionColor()
             )
         }
     }
@@ -127,6 +127,8 @@ private fun ChoiceComp(
     toNextQuestion: (() -> Unit)? = null
 ) {
     val baseScheme = MaterialTheme.colorScheme
+    val borderColor = baseScheme.onBackground.copy(alpha = 0.75f)
+
     val customScheme = if (isSystemInDarkTheme()) {
         ExtendedColorScheme.Light
     } else {
@@ -134,23 +136,27 @@ private fun ChoiceComp(
     }
     val shape = RoundedCornerShape(16)
 
-    val (backgroundColor, onBackgroundColor, border) = when {
+    val (backgroundColor, onBackgroundColor, strokeColor) = when {
         shouldHighlight && choiceState == ChoiceState.Correct -> {
-            Triple(customScheme.background, customScheme.onBackground, customScheme.border)
+            Triple(customScheme.background, customScheme.onBackground, null)
         }
 
         shouldHighlight && choiceState == ChoiceState.Incorrect -> {
-            Triple(baseScheme.error, baseScheme.onError, baseScheme.errorContainer)
+            Triple(baseScheme.error, baseScheme.onError, null)
         }
 
         else -> {
-            Triple(baseScheme.background, baseScheme.onBackground, baseScheme.onBackground)
+            Triple(baseScheme.background, baseScheme.onBackground, borderColor)
         }
     }
 
-    var cascadingModifier = modifier
-        .clip(shape)
-        .border(width = 1.dp, shape = shape, color = border)
+    var cascadingModifier = modifier.clip(shape)
+
+    if (strokeColor != null) {
+        cascadingModifier = cascadingModifier.border(
+            width = 0.5.dp, shape = shape, color = strokeColor
+        )
+    }
 
     if (!shouldHighlight) {
         cascadingModifier = cascadingModifier

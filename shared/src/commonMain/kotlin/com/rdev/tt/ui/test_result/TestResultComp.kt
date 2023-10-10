@@ -115,11 +115,6 @@ fun TestResultScreen(
 
             sortedQuestions.forEachIndexed { index, question ->
                 val isWrongAnswer = navItem.userAnswers[question.id] != question.answerIdx
-                val questionColor = if (isWrongAnswer) {
-                    Color(0xffff1430)
-                } else {
-                    Color.Unspecified
-                }
 
                 if (question.id in expansionState) {
                     this@LazyColumn.renderQuestion(
@@ -129,7 +124,7 @@ fun TestResultScreen(
                         selection = navItem.userAnswers[question.id] ?: DEFAULT_ANSWER,
                         isCompactScreen = isCompactScreen,
                         modifier = Modifier.fillMaxWidth().padding(horizontal = Spacing.x4),
-                        questionColor = questionColor,
+                        questionColor = { getQuestionColor(isWrongAnswer) },
                         onAnswer = { _, _ -> },
                     )
 
@@ -150,7 +145,7 @@ fun TestResultScreen(
                                 Text(
                                     "${defaultIndices[question.id]!! + 1}. ${question.question}",
                                     style = MaterialTheme.typography.titleMedium,
-                                    color = questionColor
+                                    color = getQuestionColor(isWrongAnswer)
                                 )
                             },
                             trailingContent = {
@@ -166,7 +161,7 @@ fun TestResultScreen(
                 }
 
                 if (index < navItem.questions.lastIndex) {
-                    item {
+                    stickyHeader {
                         Divider(Modifier.fillMaxWidth().padding(top = Spacing.x2))
                     }
                 }
@@ -181,6 +176,15 @@ fun TestResultScreen(
                 }
             }
         }
+    }
+}
+
+@Composable
+fun getQuestionColor(isWrongAnswer: Boolean): Color {
+    return if (isWrongAnswer) {
+        MaterialTheme.colorScheme.error
+    } else {
+        Color.Unspecified
     }
 }
 
