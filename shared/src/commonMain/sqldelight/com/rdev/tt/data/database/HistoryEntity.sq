@@ -14,3 +14,6 @@ VALUES (?, ?, ?);
 getLearnedQuestionIdsFilteredByIds:
 SELECT DISTINCT questionId FROM HistoryEntity
 WHERE questionId IN ? AND isCorrect = 1;
+
+countVisitedQuestions:
+SELECT COUNT(DISTINCT questionId) FROM HistoryEntity;

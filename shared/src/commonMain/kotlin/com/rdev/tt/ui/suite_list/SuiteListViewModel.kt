@@ -22,7 +22,8 @@ sealed interface SuiteListUiState {
     data class Content(
         val suites: List<SuiteItem>,
         val allQuestionCount: Int,
-        val learnedQuestionCount: Int
+        val learnedQuestionCount: Int,
+        val visitedQuestionCount: Int
     ) : SuiteListUiState
 }
 
@@ -69,6 +70,7 @@ class SuiteListViewModel(
                     suites = items,
                     allQuestionCount = items.sumOf { it.questionCount },
                     learnedQuestionCount = learnedQuestionIds.size,
+                    visitedQuestionCount = appRepo.countVisitedQuestions().getOrThrow().toInt()
                 )
             }.onFailure { e ->
                 _uiState.value = SuiteListUiState.Error(e)
