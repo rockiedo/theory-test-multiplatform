@@ -28,6 +28,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -113,6 +114,8 @@ private fun TestSuiteCompactComp(
     val coroutineScope = rememberCoroutineScope()
     var isDropdownMenuExpanded by remember { mutableStateOf(false) }
 
+    val shouldShowReviewBtn = userAnswers.size == questions.size
+
     Scaffold(
         modifier,
         topBar = {
@@ -127,13 +130,26 @@ private fun TestSuiteCompactComp(
                         }
                     },
                     actions = {
-                        Text(
-                            "${pagerState.currentPage + 1} / ${questions.size}",
-                            modifier = Modifier
-                                .padding(end = Spacing.x4)
-                                .clickable { isDropdownMenuExpanded = true },
-                            textDecoration = TextDecoration.Underline
-                        )
+                        if (shouldShowReviewBtn) {
+                            AnimatedVisibility(
+                                visible = true,
+                                enter = fadeIn() + expandIn { IntSize(width = 1, height = 1) }
+                            ) {
+                                TextButton(
+                                    onClick = { openResult(userAnswers) },
+                                ) {
+                                    Text("Review")
+                                }
+                            }
+                        } else {
+                            Text(
+                                "${pagerState.currentPage + 1} / ${questions.size}",
+                                modifier = Modifier
+                                    .padding(end = Spacing.x4)
+                                    .clickable { isDropdownMenuExpanded = true },
+                                textDecoration = TextDecoration.Underline
+                            )
+                        }
 
                         DropdownMenu(
                             expanded = isDropdownMenuExpanded,
@@ -162,18 +178,6 @@ private fun TestSuiteCompactComp(
                         }
                     },
                 )
-            }
-        },
-        floatingActionButton = {
-            AnimatedVisibility(
-                visible = userAnswers.size == questions.size,
-                enter = fadeIn() + expandIn { IntSize(width = 1, height = 1) }
-            ) {
-                Button(
-                    onClick = { openResult(userAnswers) },
-                ) {
-                    Text("Review")
-                }
             }
         }
     ) { innerPadding ->
