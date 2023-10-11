@@ -1,6 +1,7 @@
 package com.rdev.tt.ui.test_result
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -181,10 +182,10 @@ fun TestResultScreen(
 
 @Composable
 fun getQuestionColor(isWrongAnswer: Boolean): Color {
-    return if (isWrongAnswer) {
-        MaterialTheme.colorScheme.error
-    } else {
-        Color.Unspecified
+    return when {
+        !isWrongAnswer -> Color.Unspecified
+        isSystemInDarkTheme() -> MaterialTheme.colorScheme.error
+        else -> MaterialTheme.colorScheme.error
     }
 }
 

@@ -5,13 +5,13 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.lightColorScheme
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import com.rdev.tt._utils.DarkColors
+import com.rdev.tt._utils.LightColors
 import com.rdev.tt.core_model.Category
 import com.rdev.tt.core_model.Question
 import com.rdev.tt.core_model.Suite
@@ -37,9 +37,9 @@ fun TheoryTestApp(
     darkTheme: Boolean = isSystemInDarkTheme()
 ) {
     val colors = if (darkTheme) {
-        darkColorScheme()
+        DarkColors
     } else {
-        lightColorScheme()
+        LightColors
     }
 
     MaterialTheme(

@@ -18,7 +18,6 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronLeft
 import androidx.compose.material.icons.filled.RadioButtonChecked
-import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -138,7 +137,7 @@ private fun TestSuiteCompactComp(
                                 TextButton(
                                     onClick = { openResult(userAnswers) },
                                 ) {
-                                    Text("Review")
+                                    Text("REVIEW")
                                 }
                             }
                         } else {
