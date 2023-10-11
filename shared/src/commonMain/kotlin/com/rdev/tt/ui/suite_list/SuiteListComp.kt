@@ -20,7 +20,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -190,8 +189,9 @@ private fun LazyListScope.renderWelcomeCard(
             )
 
             Text(
-                "Looks like you have not started. Let's start learning!",
-                modifier = Modifier.fillMaxWidth().padding(Spacing.x4)
+                "Looks like you haven't started. Let's start learning!",
+                modifier = Modifier.fillMaxWidth().padding(Spacing.x4),
+                style = MaterialTheme.typography.bodyMedium
             )
         }
     }
@@ -242,7 +242,7 @@ private fun LazyListScope.renderStatsCard(
                 }
             } else {
                 Text(
-                    "You have been doing great. Keep it going!",
+                    "You've been doing great. Keep it going!",
                     modifier = childModifier.padding(vertical = Spacing.x4),
                     style = MaterialTheme.typography.bodyMedium
                 )
