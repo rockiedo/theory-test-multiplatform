@@ -1,9 +1,12 @@
 package com.rdev.tt
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
@@ -29,9 +32,28 @@ sealed interface AppNavItem {
     ) : AppNavItem
 }
 
+@Composable
+fun TheoryTestApp(
+    darkTheme: Boolean = isSystemInDarkTheme()
+) {
+    val colors = if (darkTheme) {
+        darkColorScheme()
+    } else {
+        lightColorScheme()
+    }
+
+    MaterialTheme(
+        colorScheme = colors,
+        content = {
+            HomeScreen()
+        }
+    )
+}
+
+
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
-fun TheoryTestApp() {
+private fun HomeScreen() {
     val navController = rememberNavController(AppNavItem::class, AppNavItem.SuiteList)
     val currentNavItem = navController.currentNavItem
 
