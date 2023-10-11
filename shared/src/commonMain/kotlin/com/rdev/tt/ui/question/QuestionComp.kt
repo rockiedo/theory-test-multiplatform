@@ -46,7 +46,7 @@ fun LazyListScope.renderQuestion(
 ) {
     val hasUserInput = selection != -1
 
-    stickyHeader {
+    stickyHeader(key = question.id) {
         Surface(
             Modifier.fillMaxWidth(),
             color = MaterialTheme.colorScheme.background
