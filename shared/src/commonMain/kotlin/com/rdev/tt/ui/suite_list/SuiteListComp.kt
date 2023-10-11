@@ -12,6 +12,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Badge
+import androidx.compose.material3.Card
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
@@ -37,6 +38,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.unit.dp
 import com.rdev.tt._utils.ExtendedColorScheme
 import com.rdev.tt._utils.Spacing
@@ -87,6 +89,7 @@ fun SuiteListScreen(
             ) {
                 if (content.visitedQuestionCount > 0) {
                     renderStatsCard(
+                        "Basic Theory Test (BTT)",
                         content.visitedQuestionCount,
                         content.learnedQuestionCount,
                         content.allQuestionCount,
@@ -98,6 +101,13 @@ fun SuiteListScreen(
                             snackbarHostState.showSnackbar("This feature is coming soon")
                         }
                     }
+                } else {
+                    renderWelcomeCard(
+                        "Basic Theory Test (BTT)",
+                        Modifier.fillMaxWidth()
+                            .padding(horizontal = Spacing.x4)
+                            .padding(top = Spacing.x4)
+                    )
                 }
 
                 renderSuiteList(
@@ -165,7 +175,30 @@ private fun LazyListScope.renderSuiteList(
     item { Spacer(Modifier.height(Spacing.x4)) }
 }
 
+private fun LazyListScope.renderWelcomeCard(
+    title: String,
+    modifier: Modifier = Modifier
+) {
+    item {
+        Card(modifier) {
+            Text(
+                title,
+                modifier = Modifier.fillMaxWidth()
+                    .padding(horizontal = Spacing.x4)
+                    .padding(top = Spacing.x4),
+                style = MaterialTheme.typography.titleMedium
+            )
+
+            Text(
+                "Looks like you have not started. Let's start learning!",
+                modifier = Modifier.fillMaxWidth().padding(Spacing.x4)
+            )
+        }
+    }
+}
+
 private fun LazyListScope.renderStatsCard(
+    categoryDisplay: String,
     visitedCount: Int,
     learnedCount: Int,
     total: Int,
@@ -175,16 +208,29 @@ private fun LazyListScope.renderStatsCard(
     val childModifier = Modifier.fillMaxWidth().padding(horizontal = Spacing.x4)
 
     item {
-        OutlinedCard(modifier) {
-            Text(
-                "Learned: $learnedCount / $total",
+        Card(modifier) {
+            Row(
                 modifier = childModifier.padding(top = Spacing.x4),
-                style = MaterialTheme.typography.titleMedium
-            )
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    categoryDisplay,
+                    modifier = Modifier.padding(end = Spacing.x4).weight(1f),
+                    style = MaterialTheme.typography.titleMedium
+                )
+
+                Text(
+                    "$learnedCount / $total",
+                    style = MaterialTheme.typography.titleMedium
+                )
+            }
 
             LinearProgressIndicator(
                 progress = learnedCount * 1f / total,
-                modifier = childModifier.padding(top = Spacing.x4)
+                modifier = childModifier.padding(top = Spacing.x4),
+                color = MaterialTheme.colorScheme.tertiary,
+                trackColor = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.3f),
+                strokeCap = StrokeCap.Round
             )
 
             if (visitedCount > learnedCount) {
@@ -195,7 +241,11 @@ private fun LazyListScope.renderStatsCard(
                     Text("Review wrong answers")
                 }
             } else {
-                Spacer(Modifier.height(Spacing.x4))
+                Text(
+                    "You have been doing great. Keep it going!",
+                    modifier = childModifier.padding(vertical = Spacing.x4),
+                    style = MaterialTheme.typography.bodyMedium
+                )
             }
         }
     }
