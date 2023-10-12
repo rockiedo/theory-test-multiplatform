@@ -46,14 +46,19 @@ import androidx.compose.ui.unit.dp
 import com.rdev.tt._utils.ExtendedColorScheme
 import com.rdev.tt._utils.Spacing
 import com.rdev.tt._utils.koinViewModel
+import com.rdev.tt.core_model.Category
 import com.rdev.tt.core_model.Suite
 import kotlinx.coroutines.launch
 
-private enum class HomeTab(val displayName: String) {
-    Lesson("Lessons"), Test("Tests")
-}
+private data class HomeTab(
+    val displayName: String,
+    val category: @Category String
+)
 
-private val homeTabs = listOf(HomeTab.Lesson, HomeTab.Test)
+private val homeTabs = listOf(
+    HomeTab("Lessons", Category.LESSON),
+    HomeTab("Tests", Category.TEST)
+)
 
 @OptIn(
     ExperimentalMaterial3Api::class,
@@ -82,8 +87,8 @@ fun HomeScreen(
 
     val suiteList = remember(selectedTab, state) {
         val content = state as HomeUiState.Content
-        if (homeTabs[selectedTab] == HomeTab.Lesson) {
-        }
+        val tab = homeTabs[selectedTab]
+        content.suites.filter { it.suite.categories.contains(tab.category) }
     }
 
     (state as? HomeUiState.Content)?.let { content ->
@@ -134,7 +139,7 @@ fun HomeScreen(
                 }
 
                 renderSuiteList(
-                    content.suites,
+                    suiteList,
                     isCompactScreen,
                     isDarkTheme
                 ) { suite -> onSelectSuite(suite) }

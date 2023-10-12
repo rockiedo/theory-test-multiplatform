@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Divider
@@ -117,7 +118,11 @@ fun TestResultScreen(
                                             return@DropdownMenuItem
                                         }
 
-                                        Icon(Icons.Filled.Close, null)
+                                        Icon(
+                                            Icons.Filled.Close,
+                                            null,
+                                            Modifier.size(20.dp)
+                                        )
                                     }
                                 )
                             }

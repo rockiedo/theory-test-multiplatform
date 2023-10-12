@@ -11,12 +11,14 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronLeft
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.RadioButtonChecked
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
@@ -165,7 +167,11 @@ private fun TestSuiteCompactComp(
                                     },
                                     trailingIcon = {
                                         if (question.id in userAnswers.keys) {
-                                            Icon(Icons.Filled.RadioButtonChecked, null)
+                                            Icon(
+                                                Icons.Filled.RadioButtonChecked,
+                                                null,
+                                                Modifier.size(20.dp)
+                                            )
                                         }
                                     }
                                 )
