@@ -17,7 +17,7 @@ import com.rdev.tt.core_model.Category
 import com.rdev.tt.core_model.Question
 import com.rdev.tt.core_model.Suite
 import com.rdev.tt.ui.rememberNavController
-import com.rdev.tt.ui.suite_list.SuiteListScreen
+import com.rdev.tt.ui.suite_list.HomeScreen
 import com.rdev.tt.ui.test_result.TestResultScreen
 import com.rdev.tt.ui.test_suite.TestSuiteCompactScreen
 import com.rdev.tt.ui.test_suite.TestSuiteScreen
@@ -64,7 +64,7 @@ private fun HomeScreen() {
     Box(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
         when (currentNavItem) {
             AppNavItem.SuiteList -> {
-                SuiteListScreen(
+                HomeScreen(
                     modifier = Modifier.fillMaxSize(),
                     onSelectSuite = {
                         navController.navTo(AppNavItem.Test(it, Category.BTT))

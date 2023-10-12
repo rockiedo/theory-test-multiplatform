@@ -6,5 +6,7 @@ annotation class Category {
     companion object {
         const val BTT = "btt"
         const val FTT = "ftt"
+        const val LESSON = "lesson"
+        const val TEST = "test"
     }
 }

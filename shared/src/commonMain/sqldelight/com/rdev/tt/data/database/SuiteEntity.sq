@@ -1,17 +1,22 @@
+import kotlin.String;
+import kotlin.collections.List;
+
 CREATE TABLE IF NOT EXISTS SuiteEntity (
     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL
+    name TEXT NOT NULL,
+    categories TEXT AS List<String> NOT NULL
 );
 
 insertSuite:
-INSERT OR REPLACE INTO SuiteEntity(name)
-VALUES (?);
+INSERT OR REPLACE INTO SuiteEntity(name, categories)
+VALUES (?, ?);
 
 getLastInsertedId:
 SELECT last_insert_rowid();
 
 getAllSuites:
-SELECT * FROM SuiteEntity;
+SELECT * FROM SuiteEntity
+WHERE categories LIKE ('%' || ? || '%');
 
 getSuitesWithQuestionCount:
 SELECT SuiteEntity.id AS id, SuiteEntity.name AS name, COUNT(QuestionSuiteEntity.questionId) AS questionCount

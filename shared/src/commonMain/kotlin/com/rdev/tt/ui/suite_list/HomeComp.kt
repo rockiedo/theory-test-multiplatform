@@ -1,5 +1,6 @@
 package com.rdev.tt.ui.suite_list
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
@@ -23,7 +24,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Surface
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
@@ -32,8 +34,10 @@ import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -45,42 +49,53 @@ import com.rdev.tt._utils.koinViewModel
 import com.rdev.tt.core_model.Suite
 import kotlinx.coroutines.launch
 
+private enum class HomeTab(val displayName: String) {
+    Lesson("Lessons"), Test("Tests")
+}
+
+private val homeTabs = listOf(HomeTab.Lesson, HomeTab.Test)
+
 @OptIn(
     ExperimentalMaterial3Api::class,
     ExperimentalMaterial3WindowSizeClassApi::class
 )
 @Composable
-fun SuiteListScreen(
+fun HomeScreen(
     modifier: Modifier = Modifier,
     onSelectSuite: (Suite) -> Unit,
-    viewModel: SuiteListViewModel = koinViewModel(SuiteListViewModel::class)
+    viewModel: HomeViewModel = koinViewModel(HomeViewModel::class)
 ) {
     val isCompactScreen = calculateWindowSizeClass().widthSizeClass == WindowWidthSizeClass.Compact
     val isDarkTheme = isSystemInDarkTheme()
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
+    var selectedTab by remember { mutableStateOf(0) }
 
     val state by viewModel.uiState.collectAsState()
 
-    if (state !is SuiteListUiState.Content) {
+    if (state !is HomeUiState.Content) {
         Box(modifier) {
             CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
         }
         return
     }
 
-    (state as? SuiteListUiState.Content)?.let { content ->
+    val suiteList = remember(selectedTab, state) {
+        val content = state as HomeUiState.Content
+        if (homeTabs[selectedTab] == HomeTab.Lesson) {
+        }
+    }
+
+    (state as? HomeUiState.Content)?.let { content ->
         Scaffold(
             modifier,
             snackbarHost = {
                 SnackbarHost(hostState = snackbarHostState)
             },
             topBar = {
-                Surface(shadowElevation = 8.dp) {
-                    CenterAlignedTopAppBar(
-                        title = { Text("Theory Test") }
-                    )
-                }
+                CenterAlignedTopAppBar(
+                    title = { Text("Theory Test") }
+                )
             }
         ) { innerPadding ->
             LazyColumn(
@@ -109,11 +124,42 @@ fun SuiteListScreen(
                     )
                 }
 
+                item { Spacer(Modifier.height(Spacing.x4)) }
+
+                renderTabs(
+                    selectedTab = selectedTab,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    selectedTab = it
+                }
+
                 renderSuiteList(
                     content.suites,
                     isCompactScreen,
                     isDarkTheme
                 ) { suite -> onSelectSuite(suite) }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+private fun LazyListScope.renderTabs(
+    selectedTab: Int,
+    modifier: Modifier = Modifier,
+    onTabClick: (Int) -> Unit = {}
+) {
+    stickyHeader {
+        TabRow(
+            selectedTabIndex = selectedTab,
+            modifier = modifier
+        ) {
+            homeTabs.forEachIndexed { index, tab ->
+                Tab(
+                    selected = selectedTab == index,
+                    onClick = { onTabClick(index) },
+                    text = { Text(tab.displayName) }
+                )
             }
         }
     }
