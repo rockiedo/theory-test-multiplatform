@@ -11,9 +11,9 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronLeft
@@ -165,11 +165,7 @@ private fun TestSuiteCompactComp(
                                     },
                                     trailingIcon = {
                                         if (question.id in userAnswers.keys) {
-                                            Icon(
-                                                Icons.Filled.RadioButtonChecked,
-                                                null,
-                                                Modifier.size(16.dp)
-                                            )
+                                            Icon(Icons.Filled.RadioButtonChecked, null)
                                         }
                                     }
                                 )
@@ -182,7 +178,9 @@ private fun TestSuiteCompactComp(
     ) { innerPadding ->
         HorizontalPager(
             pagerState,
-            modifier = Modifier.fillMaxHeight().padding(innerPadding)
+            modifier = Modifier.fillMaxHeight().padding(innerPadding),
+            // Thanks to, https://stackoverflow.com/a/77110427
+            flingBehavior = PagerDefaults.flingBehavior(pagerState, snapVelocityThreshold = 2.dp)
         ) { questionIdx ->
             val question = questions[questionIdx]
 
