@@ -7,21 +7,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.rdev.tt._utils.Spacing
-import com.rdev.tt.core_model.Category
 
 @Composable
 actual fun CustomImage(
     imageName: String,
-    category: @Category String,
     modifier: Modifier
 ) {
     AsyncImage(
-        model = getImageFilePath(imageName, category),
+        model = getImageFilePath(imageName),
         contentDescription = null,
         modifier = modifier.height(150.dp).padding(top = Spacing.x6)
     )
 }
 
-private fun getImageFilePath(imageName: String, category: @Category String): String {
+private fun getImageFilePath(imageName: String): String {
     return "file:///android_asset/images/$imageName.webp"
 }

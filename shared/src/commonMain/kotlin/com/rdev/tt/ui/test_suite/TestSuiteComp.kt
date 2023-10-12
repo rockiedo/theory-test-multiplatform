@@ -37,7 +37,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.rdev.tt._utils.Spacing
 import com.rdev.tt._utils.koinViewModel
-import com.rdev.tt.core_model.Category
 import com.rdev.tt.core_model.Question
 import com.rdev.tt.core_model.Suite
 import com.rdev.tt.ui.question.renderQuestion
@@ -46,7 +45,6 @@ import com.rdev.tt._utils.Spacing as S
 @Composable
 fun TestSuiteScreen(
     suite: Suite,
-    category: @Category String,
     onBackPress: () -> Unit,
     openResult: (List<Question>, Map<Long, Int>) -> Unit,
     modifier: Modifier = Modifier,
@@ -99,7 +97,6 @@ fun TestSuiteScreen(
                         questions = questionList,
                         userAnswers = userAnswers,
                         questionIdx = currentQuestion,
-                        category,
                         onAnswer = { questionId, answerIdx ->
                             val correctAnswerIdx =
                                 questionList.firstOrNull { it.id == questionId }?.answerIdx
@@ -189,7 +186,6 @@ private fun LazyListScope.renderContent(
     questions: List<Question>,
     userAnswers: Map<Long, Int>,
     questionIdx: Int,
-    category: @Category String,
     onAnswer: (questionId: Long, answerIdx: Int) -> Unit,
     modifier: Modifier = Modifier,
     toNextQuestion: (() -> Unit)? = null
@@ -199,7 +195,6 @@ private fun LazyListScope.renderContent(
     renderQuestion(
         questionIndex = questionIdx,
         question = question,
-        category = category,
         selection = userAnswers[question.id] ?: DEFAULT_ANSWER,
         isCompactScreen = false,
         onAnswer = onAnswer,

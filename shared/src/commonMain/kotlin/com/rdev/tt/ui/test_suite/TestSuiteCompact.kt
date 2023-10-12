@@ -18,7 +18,6 @@ import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronLeft
-import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.RadioButtonChecked
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
@@ -48,7 +47,6 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.rdev.tt._utils.Spacing
 import com.rdev.tt._utils.koinViewModel
-import com.rdev.tt.core_model.Category
 import com.rdev.tt.core_model.Question
 import com.rdev.tt.core_model.Suite
 import com.rdev.tt.ui.question.renderQuestion
@@ -57,7 +55,6 @@ import kotlinx.coroutines.launch
 @Composable
 fun TestSuiteCompactScreen(
     suite: Suite,
-    category: @Category String,
     onBackPress: () -> Unit,
     openResult: (List<Question>, Map<Long, Int>) -> Unit,
     modifier: Modifier = Modifier,
@@ -81,7 +78,6 @@ fun TestSuiteCompactScreen(
                 TestSuiteCompactComp(
                     suite,
                     content.questions,
-                    category,
                     viewModel,
                     modifier,
                     onBackPress,
@@ -104,7 +100,6 @@ private const val DEFAULT_ANSWER = -1
 private fun TestSuiteCompactComp(
     suite: Suite,
     questions: List<Question>,
-    category: @Category String,
     viewModel: TestSuiteViewModel,
     modifier: Modifier = Modifier,
     onBackPress: () -> Unit = {},
@@ -194,7 +189,6 @@ private fun TestSuiteCompactComp(
                 renderQuestion(
                     questionIndex = questionIdx,
                     question = question,
-                    category = category,
                     selection = userAnswers[question.id] ?: DEFAULT_ANSWER,
                     isCompactScreen = true,
                     onAnswer = { questionId, answerIdx ->

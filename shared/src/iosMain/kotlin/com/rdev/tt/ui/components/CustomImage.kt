@@ -8,7 +8,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.rdev.tt.ImagePathProvider
 import com.rdev.tt._utils.Spacing
-import com.rdev.tt.core_model.Category
 import io.kamel.core.utils.File
 import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
@@ -17,7 +16,6 @@ import org.koin.mp.KoinPlatformTools
 @Composable
 actual fun CustomImage(
     imageName: String,
-    category: @Category String,
     modifier: Modifier
 ) {
     val pathProvider = KoinPlatformTools.defaultContext().get().get<ImagePathProvider>()

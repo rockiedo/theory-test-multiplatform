@@ -26,7 +26,6 @@ import androidx.compose.ui.unit.dp
 import com.rdev.tt._utils.ExtendedColorScheme
 import com.rdev.tt._utils.Spacing
 import com.rdev.tt._utils.isValidImageName
-import com.rdev.tt.core_model.Category
 import com.rdev.tt.core_model.Question
 import com.rdev.tt.ui.components.CustomImage
 
@@ -36,7 +35,6 @@ private val indexers = listOf("A.", "B.", "C.", "D.")
 fun LazyListScope.renderQuestion(
     questionIndex: Int,
     question: Question,
-    category: @Category String,
     selection: Int,
     isCompactScreen: Boolean,
     onAnswer: (questionId: Long, answerIdx: Int) -> Unit,
@@ -72,7 +70,6 @@ fun LazyListScope.renderQuestion(
         item {
             CustomImage(
                 question.image!!,
-                category,
                 Modifier.fillMaxWidth().height(250.dp).padding(horizontal = Spacing.x4)
             )
         }

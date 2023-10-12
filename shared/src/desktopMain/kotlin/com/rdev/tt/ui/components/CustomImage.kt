@@ -10,16 +10,14 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.toComposeImageBitmap
 import androidx.compose.ui.unit.dp
 import com.rdev.tt._utils.Spacing
-import com.rdev.tt.core_model.Category
 import java.io.File
 
 @Composable
 actual fun CustomImage(
     imageName: String,
-    category: @Category String,
     modifier: Modifier
 ) {
-    val filePath = getImageFilePath(imageName, category)
+    val filePath = getImageFilePath(imageName)
 
     if (!File(filePath).exists()) {
         // TODO: report missing image
@@ -37,8 +35,8 @@ actual fun CustomImage(
     )
 }
 
-private fun getImageFilePath(imageName: String, category: @Category String): String {
-    return ".assets/$category/images/$imageName.webp"
+private fun getImageFilePath(imageName: String): String {
+    return ".assets/images/$imageName.webp"
 }
 
 private fun imageFromFile(file: File): ImageBitmap {

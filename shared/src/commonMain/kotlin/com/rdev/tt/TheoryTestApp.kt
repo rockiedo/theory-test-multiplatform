@@ -27,7 +27,6 @@ sealed interface AppNavItem {
     data class Test(val suite: Suite, val category: @Category String) : AppNavItem
     data class TestResult(
         val suiteName: String,
-        val category: @Category String,
         val questions: List<Question>,
         val userAnswers: Map<Long, Int>
     ) : AppNavItem
@@ -79,7 +78,6 @@ private fun HomeScreen() {
                     WindowWidthSizeClass.Compact -> {
                         TestSuiteCompactScreen(
                             suite = currentNavItem.suite,
-                            category = currentNavItem.category,
                             onBackPress = {
                                 navController.navTo(AppNavItem.SuiteList)
                             },
@@ -87,7 +85,6 @@ private fun HomeScreen() {
                                 navController.navTo(
                                     AppNavItem.TestResult(
                                         currentNavItem.suite.name,
-                                        currentNavItem.category,
                                         questions,
                                         answers
                                     )
@@ -100,7 +97,6 @@ private fun HomeScreen() {
                     WindowWidthSizeClass.Medium, WindowWidthSizeClass.Expanded -> {
                         TestSuiteScreen(
                             suite = currentNavItem.suite,
-                            category = currentNavItem.category,
                             onBackPress = {
                                 navController.navTo(AppNavItem.SuiteList)
                             },
@@ -108,7 +104,6 @@ private fun HomeScreen() {
                                 navController.navTo(
                                     AppNavItem.TestResult(
                                         currentNavItem.suite.name,
-                                        currentNavItem.category,
                                         questions,
                                         answers
                                     )

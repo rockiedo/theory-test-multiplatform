@@ -56,7 +56,7 @@ fun TestResultScreen(
     modifier: Modifier = Modifier
 ) {
     val isCompactScreen = calculateWindowSizeClass().widthSizeClass == WindowWidthSizeClass.Compact
-    val (suiteName, category, questions, userAnswers) = navItem
+    val (suiteName, questions, userAnswers) = navItem
 
     val wrongCount = remember {
         questions.count { userAnswers[it.id] != it.answerIdx }
@@ -148,7 +148,6 @@ fun TestResultScreen(
                 renderQuestion(
                     questionIndex = index,
                     question = question,
-                    category = category,
                     selection = userAnswers[question.id] ?: DEFAULT_ANSWER,
                     isCompactScreen = isCompactScreen,
                     modifier = Modifier.fillMaxWidth().padding(horizontal = Spacing.x4),

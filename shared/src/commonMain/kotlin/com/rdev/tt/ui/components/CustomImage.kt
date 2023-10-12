@@ -7,6 +7,5 @@ import com.rdev.tt.core_model.Category
 @Composable
 expect fun CustomImage(
     imageName: String,
-    category: @Category String,
     modifier: Modifier = Modifier
 )
