@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.outlined.DisabledByDefault
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -118,7 +117,7 @@ fun TestResultScreen(
                                             return@DropdownMenuItem
                                         }
 
-                                        Icon(Icons.Outlined.DisabledByDefault, null)
+                                        Icon(Icons.Filled.Close, null)
                                     }
                                 )
                             }
