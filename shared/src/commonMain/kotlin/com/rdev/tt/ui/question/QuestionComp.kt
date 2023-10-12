@@ -72,22 +72,28 @@ fun LazyListScope.renderQuestion(
     }
 
     itemsIndexed(question.choices) { index, choice ->
-        ChoiceComp(
-            indexer = indexers[index],
-            content = choice,
-            choiceState = when {
-                index == question.answerIdx -> ChoiceState.Correct
-                index == selection && index != question.answerIdx -> ChoiceState.Incorrect
-                else -> ChoiceState.Neutral
-            },
-            shouldHighlight = hasUserInput,
-            isDoingTest = isDoingTest,
-            onClick = {
-                onAnswer(question.id, index)
-            },
-            modifier = Modifier.fillMaxWidth()
-                .padding(horizontal = Spacing.x4),
-        )
+        if (isDoingTest) {
+            TestingChoiceComp(
+                indexer = indexers[index],
+                content = choice,
+                isSelected = index == selection,
+                onClick = { onAnswer(question.id, index) },
+                modifier = Modifier.fillMaxWidth().padding(horizontal = Spacing.x4)
+            )
+        } else {
+            ChoiceComp(
+                indexer = indexers[index],
+                content = choice,
+                choiceState = when {
+                    index == question.answerIdx -> ChoiceState.Correct
+                    index == selection && index != question.answerIdx -> ChoiceState.Incorrect
+                    else -> ChoiceState.Neutral
+                },
+                shouldHighlight = hasUserInput,
+                onClick = { onAnswer(question.id, index) },
+                modifier = Modifier.fillMaxWidth().padding(horizontal = Spacing.x4)
+            )
+        }
 
         if (index < question.choices.lastIndex) {
             Spacer(Modifier.height(Spacing.x4))
@@ -107,7 +113,6 @@ private fun ChoiceComp(
     content: String,
     choiceState: ChoiceState,
     shouldHighlight: Boolean,
-    isDoingTest: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -147,6 +152,40 @@ private fun ChoiceComp(
         cascadingModifier = cascadingModifier
             .clickable { onClick() }
     }
+
+    ListItem(
+        headlineContent = { Text(content) },
+        overlineContent = { Text(indexer, style = MaterialTheme.typography.labelMedium) },
+        colors = ListItemDefaults.colors(
+            containerColor = backgroundColor,
+            headlineColor = onBackgroundColor,
+            overlineColor = onBackgroundColor
+        ),
+        modifier = cascadingModifier
+    )
+}
+
+@Composable
+private fun TestingChoiceComp(
+    indexer: String,
+    content: String,
+    isSelected: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val baseScheme = MaterialTheme.colorScheme
+    val borderColor = baseScheme.onBackground.copy(alpha = 0.75f)
+    val shape = RoundedCornerShape(16)
+
+    val (backgroundColor, onBackgroundColor) = if (isSelected) {
+        Pair(baseScheme.surfaceVariant, baseScheme.onSurfaceVariant)
+    } else {
+        Pair(baseScheme.background, baseScheme.onBackground)
+    }
+
+    val cascadingModifier = modifier.clip(shape)
+        .border(width = 0.5.dp, shape = shape, color = borderColor)
+        .clickable { onClick() }
 
     ListItem(
         headlineContent = { Text(content) },
