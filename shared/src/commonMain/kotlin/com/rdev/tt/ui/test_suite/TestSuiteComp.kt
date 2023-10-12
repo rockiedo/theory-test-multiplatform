@@ -121,7 +121,12 @@ private fun TestSuiteCompactComp(
             Surface(shadowElevation = 8.dp) {
                 TopAppBar(
                     title = {
-                        Text(suite.name, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                        Text(
+                            suite.name,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier.padding(end = Spacing.x2)
+                        )
                     },
                     navigationIcon = {
                         IconButton(onClick = onBackPress) {
@@ -184,7 +189,7 @@ private fun TestSuiteCompactComp(
             pagerState,
             modifier = Modifier.fillMaxHeight().padding(innerPadding),
             // Thanks to, https://stackoverflow.com/a/77110427
-            flingBehavior = PagerDefaults.flingBehavior(pagerState, snapVelocityThreshold = 2.dp)
+            flingBehavior = PagerDefaults.flingBehavior(pagerState, snapVelocityThreshold = 4.dp)
         ) { questionIdx ->
             val question = questions[questionIdx]
 

@@ -68,9 +68,9 @@ fun TestResultScreen(
                     title = {
                         Text(
                             suiteName,
-                            modifier = Modifier.padding(start = Spacing.x4),
                             maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier.padding(end = Spacing.x2)
                         )
                     },
                     navigationIcon = {
