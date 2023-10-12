@@ -11,7 +11,6 @@ plugins {
 kotlin {
     targetHierarchy.default()
 
-    jvm("desktop")
     androidTarget()
     iosX64()
     iosArm64()
@@ -51,14 +50,6 @@ kotlin {
                 api(libs.koinAndroid)
                 implementation(libs.coilCompose)
                 implementation(libs.sqlDelightAndroid)
-            }
-        }
-        val desktopMain by getting {
-            dependencies {
-                // More info, https://github.com/JetBrains/compose-multiplatform/releases/tag/v1.1.1
-                implementation(libs.coroutinesJvm)
-                implementation(libs.ktorJvm)
-                implementation(libs.sqlDelightJvm)
             }
         }
         val iosX64Main by getting

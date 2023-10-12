@@ -17,4 +17,3 @@ rootProject.name = "theory-test"
 
 include(":shared")
 include(":androidApp")
-include(":desktopApp")
