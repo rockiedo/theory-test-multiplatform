@@ -53,7 +53,7 @@ import com.rdev.tt.ui.question.renderQuestion
 import kotlinx.coroutines.launch
 
 @Composable
-fun TestSuiteCompactScreen(
+fun TestSuiteScreen(
     suite: Suite,
     onBackPress: () -> Unit,
     openResult: (List<Question>, Map<Long, Int>) -> Unit,
@@ -129,6 +129,14 @@ private fun TestSuiteCompactComp(
                         }
                     },
                     actions = {
+                        Text(
+                            "${pagerState.currentPage + 1} / ${questions.size}",
+                            modifier = Modifier
+                                .padding(end = Spacing.x4)
+                                .clickable { isDropdownMenuExpanded = true },
+                            textDecoration = TextDecoration.Underline
+                        )
+
                         AnimatedVisibility(
                             visible = shouldShowReviewBtn,
                             enter = fadeIn() + expandIn { IntSize(width = 1, height = 1) }
@@ -141,14 +149,6 @@ private fun TestSuiteCompactComp(
                                 )
                             }
                         }
-
-                        Text(
-                            "${pagerState.currentPage + 1} / ${questions.size}",
-                            modifier = Modifier
-                                .padding(end = Spacing.x4)
-                                .clickable { isDropdownMenuExpanded = true },
-                            textDecoration = TextDecoration.Underline
-                        )
 
                         DropdownMenu(
                             expanded = isDropdownMenuExpanded,

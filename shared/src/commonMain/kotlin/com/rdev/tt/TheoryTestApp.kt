@@ -16,7 +16,7 @@ import com.rdev.tt.core_model.Suite
 import com.rdev.tt.ui.rememberNavController
 import com.rdev.tt.ui.suite_list.HomeScreen
 import com.rdev.tt.ui.test_result.TestResultScreen
-import com.rdev.tt.ui.test_suite.TestSuiteCompactScreen
+import com.rdev.tt.ui.test_suite.TestSuiteScreen
 
 sealed interface AppNavItem {
     data object SuiteList : AppNavItem
@@ -66,7 +66,7 @@ private fun HomeScreen() {
             }
 
             is AppNavItem.Test -> {
-                TestSuiteCompactScreen(
+                TestSuiteScreen(
                     suite = currentNavItem.suite,
                     isDoingTest = currentNavItem.suite.categories.contains(Category.TEST),
                     onBackPress = {
