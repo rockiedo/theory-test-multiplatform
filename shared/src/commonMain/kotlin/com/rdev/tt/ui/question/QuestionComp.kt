@@ -11,8 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
@@ -36,11 +34,10 @@ fun LazyListScope.renderQuestion(
     questionIndex: Int,
     question: Question,
     selection: Int,
-    isCompactScreen: Boolean,
+    isDoingTest: Boolean,
     onAnswer: (questionId: Long, answerIdx: Int) -> Unit,
     modifier: Modifier = Modifier,
     questionColor: @Composable () -> Color = { Color.Unspecified },
-    toNextQuestion: (() -> Unit)? = null
 ) {
     val hasUserInput = selection != -1
 
@@ -60,27 +57,18 @@ fun LazyListScope.renderQuestion(
 
     if (isValidImageName(question.image)) {
         item {
-            if (isCompactScreen) {
-                Spacer(Modifier.height(Spacing.x4))
-            } else {
-                Spacer(Modifier.height(Spacing.x6))
-            }
-        }
-
-        item {
             CustomImage(
                 question.image!!,
-                Modifier.fillMaxWidth().height(250.dp).padding(horizontal = Spacing.x4)
+                Modifier.fillMaxWidth()
+                    .height(250.dp)
+                    .padding(horizontal = Spacing.x4)
+                    .padding(top = Spacing.x4)
             )
         }
     }
 
     item {
-        if (isCompactScreen) {
-            Spacer(Modifier.height(Spacing.x4))
-        } else {
-            Spacer(Modifier.height(Spacing.x6))
-        }
+        Spacer(Modifier.height(Spacing.x4))
     }
 
     itemsIndexed(question.choices) { index, choice ->
@@ -93,12 +81,12 @@ fun LazyListScope.renderQuestion(
                 else -> ChoiceState.Neutral
             },
             shouldHighlight = hasUserInput,
+            isDoingTest = isDoingTest,
             onClick = {
                 onAnswer(question.id, index)
             },
             modifier = Modifier.fillMaxWidth()
                 .padding(horizontal = Spacing.x4),
-            toNextQuestion = toNextQuestion
         )
 
         if (index < question.choices.lastIndex) {
@@ -119,9 +107,9 @@ private fun ChoiceComp(
     content: String,
     choiceState: ChoiceState,
     shouldHighlight: Boolean,
+    isDoingTest: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    toNextQuestion: (() -> Unit)? = null
 ) {
     val baseScheme = MaterialTheme.colorScheme
     val borderColor = baseScheme.onBackground.copy(alpha = 0.75f)
@@ -163,19 +151,6 @@ private fun ChoiceComp(
     ListItem(
         headlineContent = { Text(content) },
         overlineContent = { Text(indexer, style = MaterialTheme.typography.labelMedium) },
-        trailingContent = {
-            if (shouldHighlight && choiceState == ChoiceState.Correct && toNextQuestion != null) {
-                Button(
-                    onClick = toNextQuestion,
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.onSurface,
-                        contentColor = MaterialTheme.colorScheme.surface
-                    )
-                ) {
-                    Text("Next")
-                }
-            }
-        },
         colors = ListItemDefaults.colors(
             containerColor = backgroundColor,
             headlineColor = onBackgroundColor,

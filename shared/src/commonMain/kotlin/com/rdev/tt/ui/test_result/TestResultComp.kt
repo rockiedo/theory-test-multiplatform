@@ -22,9 +22,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
-import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
-import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -45,7 +42,6 @@ import kotlinx.coroutines.launch
 private const val DEFAULT_ANSWER = -1
 
 @OptIn(
-    ExperimentalMaterial3WindowSizeClassApi::class,
     ExperimentalMaterial3Api::class,
     ExperimentalFoundationApi::class
 )
@@ -55,7 +51,6 @@ fun TestResultScreen(
     onClose: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val isCompactScreen = calculateWindowSizeClass().widthSizeClass == WindowWidthSizeClass.Compact
     val (suiteName, questions, userAnswers) = navItem
 
     val wrongCount = remember {
@@ -136,12 +131,6 @@ fun TestResultScreen(
             modifier = Modifier.fillMaxSize().padding(innerPadding),
             state = indexedState
         ) {
-            item {
-                if (!isCompactScreen) {
-                    Spacer(Modifier.height(Spacing.x4))
-                }
-            }
-
             questions.forEachIndexed { index, question ->
                 val isWrongAnswer = userAnswers[question.id] != question.answerIdx
 
@@ -149,7 +138,7 @@ fun TestResultScreen(
                     questionIndex = index,
                     question = question,
                     selection = userAnswers[question.id] ?: DEFAULT_ANSWER,
-                    isCompactScreen = isCompactScreen,
+                    isDoingTest = false,
                     modifier = Modifier.fillMaxWidth().padding(horizontal = Spacing.x4),
                     questionColor = { getQuestionColor(isWrongAnswer) },
                     onAnswer = { _, _ -> },

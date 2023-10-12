@@ -58,6 +58,7 @@ fun TestSuiteCompactScreen(
     onBackPress: () -> Unit,
     openResult: (List<Question>, Map<Long, Int>) -> Unit,
     modifier: Modifier = Modifier,
+    isDoingTest: Boolean = false,
     viewModel: TestSuiteViewModel = koinViewModel(TestSuiteViewModel::class)
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -78,6 +79,7 @@ fun TestSuiteCompactScreen(
                 TestSuiteCompactComp(
                     suite,
                     content.questions,
+                    isDoingTest,
                     viewModel,
                     modifier,
                     onBackPress,
@@ -100,6 +102,7 @@ private const val DEFAULT_ANSWER = -1
 private fun TestSuiteCompactComp(
     suite: Suite,
     questions: List<Question>,
+    isDoingTest: Boolean,
     viewModel: TestSuiteViewModel,
     modifier: Modifier = Modifier,
     onBackPress: () -> Unit = {},
@@ -126,26 +129,26 @@ private fun TestSuiteCompactComp(
                         }
                     },
                     actions = {
-                        if (shouldShowReviewBtn) {
-                            AnimatedVisibility(
-                                visible = true,
-                                enter = fadeIn() + expandIn { IntSize(width = 1, height = 1) }
+                        AnimatedVisibility(
+                            visible = shouldShowReviewBtn,
+                            enter = fadeIn() + expandIn { IntSize(width = 1, height = 1) }
+                        ) {
+                            TextButton(
+                                onClick = { openResult(userAnswers) },
                             ) {
-                                TextButton(
-                                    onClick = { openResult(userAnswers) },
-                                ) {
-                                    Text("REVIEW")
-                                }
+                                Text(
+                                    if (isDoingTest) "SUBMIT" else "REVIEW"
+                                )
                             }
-                        } else {
-                            Text(
-                                "${pagerState.currentPage + 1} / ${questions.size}",
-                                modifier = Modifier
-                                    .padding(end = Spacing.x4)
-                                    .clickable { isDropdownMenuExpanded = true },
-                                textDecoration = TextDecoration.Underline
-                            )
                         }
+
+                        Text(
+                            "${pagerState.currentPage + 1} / ${questions.size}",
+                            modifier = Modifier
+                                .padding(end = Spacing.x4)
+                                .clickable { isDropdownMenuExpanded = true },
+                            textDecoration = TextDecoration.Underline
+                        )
 
                         DropdownMenu(
                             expanded = isDropdownMenuExpanded,
@@ -190,7 +193,7 @@ private fun TestSuiteCompactComp(
                     questionIndex = questionIdx,
                     question = question,
                     selection = userAnswers[question.id] ?: DEFAULT_ANSWER,
-                    isCompactScreen = true,
+                    isDoingTest = isDoingTest,
                     onAnswer = { questionId, answerIdx ->
                         val correctAnswerIdx =
                             questions.firstOrNull { it.id == questionId }?.answerIdx
@@ -204,7 +207,6 @@ private fun TestSuiteCompactComp(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = Spacing.x4),
-                    toNextQuestion = null
                 )
             }
         }
