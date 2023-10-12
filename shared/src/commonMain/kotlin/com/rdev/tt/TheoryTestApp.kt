@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
@@ -34,13 +35,16 @@ sealed interface AppNavItem {
 
 @Composable
 fun TheoryTestApp(
-    darkTheme: Boolean = isSystemInDarkTheme()
+    darkTheme: Boolean = isSystemInDarkTheme(),
+    setSystemBarsColor: @Composable (ColorScheme) -> Unit = {}
 ) {
     val colors = if (darkTheme) {
         DarkColors
     } else {
         LightColors
     }
+
+    setSystemBarsColor(colors)
 
     MaterialTheme(
         colorScheme = colors,

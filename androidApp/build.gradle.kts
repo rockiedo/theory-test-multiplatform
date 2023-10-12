@@ -42,4 +42,5 @@ android {
 dependencies {
     implementation(project(":shared"))
     implementation(libs.bundles.androidxCompose)
+    implementation("com.google.accompanist:accompanist-systemuicontroller:0.27.0")
 }
