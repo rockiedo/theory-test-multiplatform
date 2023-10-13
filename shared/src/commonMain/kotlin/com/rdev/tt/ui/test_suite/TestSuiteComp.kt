@@ -171,7 +171,7 @@ private fun TestSuiteCompactComp(
                                     onClick = {
                                         isDropdownMenuExpanded = false
                                         coroutineScope.launch {
-                                            pagerState.scrollToPage(index)
+                                            pagerState.animateScrollToPage(index)
                                         }
                                     },
                                     trailingIcon = {
@@ -198,7 +198,7 @@ private fun TestSuiteCompactComp(
                     IconButton(
                         onClick = {
                             coroutineScope.launch {
-                                pagerState.scrollToPage(pagerState.currentPage - 1)
+                                pagerState.animateScrollToPage(pagerState.currentPage - 1)
                             }
                         }
                     ) { Icon(Icons.Filled.ArrowBack, null) }
@@ -212,7 +212,7 @@ private fun TestSuiteCompactComp(
                     IconButton(
                         onClick = {
                             coroutineScope.launch {
-                                pagerState.scrollToPage(pagerState.currentPage + 1)
+                                pagerState.animateScrollToPage(pagerState.currentPage + 1)
                             }
                         }
                     ) { Icon(Icons.Filled.ArrowForward, null) }
