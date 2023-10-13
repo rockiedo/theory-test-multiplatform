@@ -1,12 +1,16 @@
 package com.rdev.tt.ui.test_suite
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.expandIn
 import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,6 +21,8 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.ChevronLeft
 import androidx.compose.material.icons.filled.RadioButtonChecked
 import androidx.compose.material3.CircularProgressIndicator
@@ -166,7 +172,14 @@ private fun TestSuiteCompactComp(
                                     },
                                     onClick = {
                                         isDropdownMenuExpanded = false
-                                        coroutineScope.launch { pagerState.scrollToPage(index) }
+                                        coroutineScope.launch {
+                                            pagerState.animateScrollToPage(
+                                                index,
+                                                animationSpec = spring(
+                                                    stiffness = Spring.StiffnessVeryLow
+                                                )
+                                            )
+                                        }
                                     },
                                     trailingIcon = {
                                         if (question.id in userAnswers.keys) {
@@ -182,6 +195,41 @@ private fun TestSuiteCompactComp(
                         }
                     },
                 )
+            }
+        },
+        bottomBar = {
+            Row(Modifier.padding(horizontal = Spacing.x4)) {
+                AnimatedVisibility(
+                    visible = pagerState.currentPage > 0
+                ) {
+                    IconButton(
+                        onClick = {
+                            coroutineScope.launch {
+                                pagerState.animateScrollToPage(
+                                    pagerState.currentPage - 1,
+                                    animationSpec = spring(stiffness = Spring.StiffnessVeryLow)
+                                )
+                            }
+                        }
+                    ) { Icon(Icons.Filled.ArrowBack, null) }
+                }
+
+                Spacer(Modifier.weight(1f))
+
+                AnimatedVisibility(
+                    visible = pagerState.currentPage < questions.lastIndex
+                ) {
+                    IconButton(
+                        onClick = {
+                            coroutineScope.launch {
+                                pagerState.animateScrollToPage(
+                                    pagerState.currentPage + 1,
+                                    animationSpec = spring(stiffness = Spring.StiffnessVeryLow)
+                                )
+                            }
+                        }
+                    ) { Icon(Icons.Filled.ArrowForward, null) }
+                }
             }
         }
     ) { innerPadding ->
