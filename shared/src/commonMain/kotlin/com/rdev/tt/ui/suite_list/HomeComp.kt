@@ -2,7 +2,6 @@ package com.rdev.tt.ui.suite_list
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -16,6 +15,7 @@ import androidx.compose.material3.Badge
 import androidx.compose.material3.Card
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LinearProgressIndicator
@@ -43,7 +43,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.unit.dp
-import com.rdev.tt._utils.ExtendedColorScheme
 import com.rdev.tt._utils.Spacing
 import com.rdev.tt._utils.koinViewModel
 import com.rdev.tt.core_model.Category
@@ -71,7 +70,7 @@ fun HomeScreen(
     viewModel: HomeViewModel = koinViewModel(HomeViewModel::class)
 ) {
     val isCompactScreen = calculateWindowSizeClass().widthSizeClass == WindowWidthSizeClass.Compact
-    val isDarkTheme = isSystemInDarkTheme()
+    val colorScheme = MaterialTheme.colorScheme
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
     var selectedTab by remember { mutableStateOf(0) }
@@ -141,7 +140,7 @@ fun HomeScreen(
                 renderSuiteList(
                     suiteList,
                     isCompactScreen,
-                    isDarkTheme
+                    colorScheme,
                 ) { suite -> onSelectSuite(suite) }
             }
         }
@@ -174,11 +173,10 @@ private fun LazyListScope.renderTabs(
 private fun LazyListScope.renderSuiteList(
     suites: List<SuiteItem>,
     isCompactScreen: Boolean,
-    isDarkTheme: Boolean,
+    colorScheme: ColorScheme,
     onClick: (Suite) -> Unit = {},
 ) {
     val itemShape = RoundedCornerShape(16)
-    val customScheme = if (isDarkTheme) ExtendedColorScheme.Light else ExtendedColorScheme.Dark
 
     if (!isCompactScreen) {
         item { Spacer(Modifier.height(Spacing.x4)) }
@@ -191,8 +189,8 @@ private fun LazyListScope.renderSuiteList(
             overlineContent = {
                 if (item.learnedQuestionCount == item.questionCount) {
                     Badge(
-                        containerColor = customScheme.background,
-                        contentColor = customScheme.onBackground
+                        containerColor = colorScheme.primary,
+                        contentColor = colorScheme.onPrimary
                     ) {
                         Text("Complete")
                     }

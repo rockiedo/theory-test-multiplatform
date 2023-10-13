@@ -3,7 +3,6 @@ package com.rdev.tt.ui.question
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -21,7 +20,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.rdev.tt._utils.ExtendedColorScheme
 import com.rdev.tt._utils.Spacing
 import com.rdev.tt._utils.isValidImageName
 import com.rdev.tt.core_model.Question
@@ -118,21 +116,23 @@ private fun ChoiceComp(
 ) {
     val baseScheme = MaterialTheme.colorScheme
     val borderColor = baseScheme.onBackground.copy(alpha = 0.75f)
-
-    val customScheme = if (isSystemInDarkTheme()) {
-        ExtendedColorScheme.Light
-    } else {
-        ExtendedColorScheme.Dark
-    }
     val shape = RoundedCornerShape(16)
 
     val (backgroundColor, onBackgroundColor, strokeColor) = when {
         shouldHighlight && choiceState == ChoiceState.Correct -> {
-            Triple(customScheme.background, customScheme.onBackground, null)
+            Triple(
+                baseScheme.primaryContainer,
+                baseScheme.onPrimaryContainer,
+                baseScheme.onPrimaryContainer
+            )
         }
 
         shouldHighlight && choiceState == ChoiceState.Incorrect -> {
-            Triple(baseScheme.error, baseScheme.onError, null)
+            Triple(
+                baseScheme.errorContainer,
+                baseScheme.onErrorContainer,
+                baseScheme.onErrorContainer
+            )
         }
 
         else -> {
@@ -140,13 +140,9 @@ private fun ChoiceComp(
         }
     }
 
-    var cascadingModifier = modifier.clip(shape)
-
-    if (strokeColor != null) {
-        cascadingModifier = cascadingModifier.border(
-            width = 0.5.dp, shape = shape, color = strokeColor
-        )
-    }
+    var cascadingModifier = modifier.clip(shape).border(
+        width = 0.5.dp, shape = shape, color = strokeColor
+    )
 
     if (!shouldHighlight) {
         cascadingModifier = cascadingModifier
@@ -174,13 +170,17 @@ private fun TestingChoiceComp(
     modifier: Modifier = Modifier,
 ) {
     val baseScheme = MaterialTheme.colorScheme
-    val borderColor = baseScheme.onBackground.copy(alpha = 0.75f)
+    val baseBorderColor = baseScheme.onBackground.copy(alpha = 0.75f)
     val shape = RoundedCornerShape(16)
 
-    val (backgroundColor, onBackgroundColor) = if (isSelected) {
-        Pair(baseScheme.surfaceVariant, baseScheme.onSurfaceVariant)
+    val (backgroundColor, onBackgroundColor, borderColor) = if (isSelected) {
+        Triple(
+            baseScheme.tertiaryContainer,
+            baseScheme.onTertiaryContainer,
+            baseScheme.onTertiaryContainer
+        )
     } else {
-        Pair(baseScheme.background, baseScheme.onBackground)
+        Triple(baseScheme.background, baseScheme.onBackground, baseBorderColor)
     }
 
     val cascadingModifier = modifier.clip(shape)
