@@ -1,8 +1,6 @@
 package com.rdev.tt.ui.test_suite
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.spring
 import androidx.compose.animation.expandIn
 import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -173,12 +171,7 @@ private fun TestSuiteCompactComp(
                                     onClick = {
                                         isDropdownMenuExpanded = false
                                         coroutineScope.launch {
-                                            pagerState.animateScrollToPage(
-                                                index,
-                                                animationSpec = spring(
-                                                    stiffness = Spring.StiffnessVeryLow
-                                                )
-                                            )
+                                            pagerState.scrollToPage(index)
                                         }
                                     },
                                     trailingIcon = {
@@ -205,10 +198,7 @@ private fun TestSuiteCompactComp(
                     IconButton(
                         onClick = {
                             coroutineScope.launch {
-                                pagerState.animateScrollToPage(
-                                    pagerState.currentPage - 1,
-                                    animationSpec = spring(stiffness = Spring.StiffnessVeryLow)
-                                )
+                                pagerState.scrollToPage(pagerState.currentPage - 1)
                             }
                         }
                     ) { Icon(Icons.Filled.ArrowBack, null) }
@@ -222,10 +212,7 @@ private fun TestSuiteCompactComp(
                     IconButton(
                         onClick = {
                             coroutineScope.launch {
-                                pagerState.animateScrollToPage(
-                                    pagerState.currentPage + 1,
-                                    animationSpec = spring(stiffness = Spring.StiffnessVeryLow)
-                                )
+                                pagerState.scrollToPage(pagerState.currentPage + 1)
                             }
                         }
                     ) { Icon(Icons.Filled.ArrowForward, null) }
