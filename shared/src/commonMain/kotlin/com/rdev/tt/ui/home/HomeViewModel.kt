@@ -1,4 +1,4 @@
-package com.rdev.tt.ui.suite_list
+package com.rdev.tt.ui.home
 
 import com.rdev.tt.core_model.Category
 import com.rdev.tt.core_model.Suite

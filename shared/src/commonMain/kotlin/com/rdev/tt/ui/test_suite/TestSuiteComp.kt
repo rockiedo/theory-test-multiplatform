@@ -57,7 +57,7 @@ import com.rdev.tt.ui.question.renderQuestion
 import kotlinx.coroutines.launch
 
 @Composable
-fun TestSuiteScreen(
+fun TestSuiteScreenLegacy(
     suite: Suite,
     onBackPress: () -> Unit,
     openResult: (List<Question>, Map<Long, Int>) -> Unit,
@@ -103,7 +103,7 @@ private const val DEFAULT_ANSWER = -1
     ExperimentalMaterial3Api::class,
 )
 @Composable
-private fun TestSuiteCompactComp(
+fun TestSuiteCompactComp(
     suite: Suite,
     questions: List<Question>,
     isDoingTest: Boolean,

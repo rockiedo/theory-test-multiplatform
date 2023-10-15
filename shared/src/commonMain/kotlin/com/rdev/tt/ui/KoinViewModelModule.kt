@@ -1,7 +1,7 @@
 package com.rdev.tt.ui
 
 import com.rdev.tt._utils.ViewModelFactoryBinding
-import com.rdev.tt.ui.suite_list.HomeViewModel
+import com.rdev.tt.ui.home.HomeViewModel
 import com.rdev.tt.ui.test_result.TestResultViewModel
 import com.rdev.tt.ui.test_suite.TestSuiteViewModel
 import org.koin.dsl.module

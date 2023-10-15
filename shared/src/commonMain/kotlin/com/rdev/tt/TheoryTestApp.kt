@@ -8,15 +8,16 @@ import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import cafe.adriel.voyager.navigator.Navigator
 import com.rdev.tt._utils.DarkColors
 import com.rdev.tt._utils.LightColors
 import com.rdev.tt.core_model.Category
 import com.rdev.tt.core_model.Question
 import com.rdev.tt.core_model.Suite
+import com.rdev.tt.ui.home.HomeScreen
 import com.rdev.tt.ui.rememberNavController
-import com.rdev.tt.ui.suite_list.HomeScreen
 import com.rdev.tt.ui.test_result.TestResultScreen
-import com.rdev.tt.ui.test_suite.TestSuiteScreen
+import com.rdev.tt.ui.test_suite.TestSuiteScreenLegacy
 
 sealed interface AppNavItem {
     data object SuiteList : AppNavItem
@@ -50,6 +51,29 @@ fun TheoryTestApp(
 }
 
 @Composable
+fun TheoryTestVoyagerApp(
+    darkTheme: Boolean = isSystemInDarkTheme(),
+    setSystemBarsColor: @Composable (ColorScheme) -> Unit = {}
+) {
+    val colors = if (darkTheme) {
+        DarkColors
+    } else {
+        LightColors
+    }
+
+    setSystemBarsColor(colors)
+
+    MaterialTheme(
+        colorScheme = colors,
+        content = {
+            Navigator(screen = HomeScreen) {
+                // TODO: implement
+            }
+        }
+    )
+}
+
+@Composable
 private fun HomeScreen() {
     val navController = rememberNavController(AppNavItem::class, AppNavItem.SuiteList)
     val currentNavItem = navController.currentNavItem
@@ -57,16 +81,10 @@ private fun HomeScreen() {
     Box(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
         when (currentNavItem) {
             AppNavItem.SuiteList -> {
-                HomeScreen(
-                    modifier = Modifier.fillMaxSize(),
-                    onSelectSuite = {
-                        navController.navTo(AppNavItem.Test(it))
-                    }
-                )
             }
 
             is AppNavItem.Test -> {
-                TestSuiteScreen(
+                TestSuiteScreenLegacy(
                     suite = currentNavItem.suite,
                     isDoingTest = currentNavItem.suite.categories.contains(Category.TEST),
                     onBackPress = {
