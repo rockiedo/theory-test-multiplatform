@@ -41,6 +41,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.unit.dp
+import cafe.adriel.voyager.core.lifecycle.LifecycleEffect
 import cafe.adriel.voyager.core.screen.Screen
 import com.rdev.tt._utils.Spacing
 import com.rdev.tt._utils.koinViewModel
@@ -63,6 +64,10 @@ object HomeScreen : Screen {
     @Composable
     override fun Content() {
         val viewModel = koinViewModel(HomeViewModel::class)
+
+        LifecycleEffect(
+            onDisposed = { viewModel.onCleared() }
+        )
 
         val colorScheme = MaterialTheme.colorScheme
         val snackbarHostState = remember { SnackbarHostState() }
@@ -137,151 +142,151 @@ object HomeScreen : Screen {
             }
         }
     }
+}
 
-    @OptIn(ExperimentalFoundationApi::class)
-    private fun LazyListScope.renderTabs(
-        selectedTab: Int,
-        modifier: Modifier = Modifier,
-        onTabClick: (Int) -> Unit = {}
-    ) {
-        stickyHeader {
-            TabRow(
-                selectedTabIndex = selectedTab,
-                modifier = modifier
-            ) {
-                homeTabs.forEachIndexed { index, tab ->
-                    Tab(
-                        selected = selectedTab == index,
-                        onClick = { onTabClick(index) },
-                        text = { Text(tab.displayName) }
+@OptIn(ExperimentalFoundationApi::class)
+private fun LazyListScope.renderTabs(
+    selectedTab: Int,
+    modifier: Modifier = Modifier,
+    onTabClick: (Int) -> Unit = {}
+) {
+    stickyHeader {
+        TabRow(
+            selectedTabIndex = selectedTab,
+            modifier = modifier
+        ) {
+            homeTabs.forEachIndexed { index, tab ->
+                Tab(
+                    selected = selectedTab == index,
+                    onClick = { onTabClick(index) },
+                    text = { Text(tab.displayName) }
+                )
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+private fun LazyListScope.renderSuiteList(
+    suites: List<SuiteItem>,
+    colorScheme: ColorScheme,
+    onClick: (Suite) -> Unit = {},
+) {
+    val itemShape = RoundedCornerShape(16)
+
+    items(suites.size) { index ->
+        val item = suites[index]
+
+        ListItem(
+            overlineContent = {
+                if (item.learnedQuestionCount == item.questionCount) {
+                    Badge(
+                        containerColor = colorScheme.primary,
+                        contentColor = colorScheme.onPrimary
+                    ) {
+                        Text("Complete")
+                    }
+                }
+            },
+            headlineContent = {
+                Row(verticalAlignment = Alignment.Top) {
+                    Text("${index + 1}.")
+
+                    Text(
+                        item.suite.name,
+                        modifier = Modifier.weight(1f).padding(start = Spacing.x2)
                     )
                 }
-            }
+            },
+            trailingContent = {
+                Text("${item.learnedQuestionCount} / ${item.questionCount}")
+            },
+            modifier = Modifier
+                .padding(vertical = Spacing.x2)
+                .clip(itemShape)
+                .clickable { onClick(item.suite) }
+        )
+
+        if (index < suites.size - 1) {
+            Divider(thickness = 1.dp, modifier = Modifier.padding(horizontal = Spacing.x4))
         }
     }
 
-    @OptIn(ExperimentalMaterial3Api::class)
-    private fun LazyListScope.renderSuiteList(
-        suites: List<SuiteItem>,
-        colorScheme: ColorScheme,
-        onClick: (Suite) -> Unit = {},
-    ) {
-        val itemShape = RoundedCornerShape(16)
+    item { Spacer(Modifier.height(Spacing.x4)) }
+}
 
-        items(suites.size) { index ->
-            val item = suites[index]
-
-            ListItem(
-                overlineContent = {
-                    if (item.learnedQuestionCount == item.questionCount) {
-                        Badge(
-                            containerColor = colorScheme.primary,
-                            contentColor = colorScheme.onPrimary
-                        ) {
-                            Text("Complete")
-                        }
-                    }
-                },
-                headlineContent = {
-                    Row(verticalAlignment = Alignment.Top) {
-                        Text("${index + 1}.")
-
-                        Text(
-                            item.suite.name,
-                            modifier = Modifier.weight(1f).padding(start = Spacing.x2)
-                        )
-                    }
-                },
-                trailingContent = {
-                    Text("${item.learnedQuestionCount} / ${item.questionCount}")
-                },
-                modifier = Modifier
-                    .padding(vertical = Spacing.x2)
-                    .clip(itemShape)
-                    .clickable { onClick(item.suite) }
+private fun LazyListScope.renderWelcomeCard(
+    title: String,
+    modifier: Modifier = Modifier
+) {
+    item {
+        Card(modifier) {
+            Text(
+                title,
+                modifier = Modifier.fillMaxWidth()
+                    .padding(horizontal = Spacing.x4)
+                    .padding(top = Spacing.x4),
+                style = MaterialTheme.typography.titleMedium
             )
 
-            if (index < suites.size - 1) {
-                Divider(thickness = 1.dp, modifier = Modifier.padding(horizontal = Spacing.x4))
-            }
+            Text(
+                "Looks like you haven't started. Let's start learning!",
+                modifier = Modifier.fillMaxWidth().padding(Spacing.x4),
+                style = MaterialTheme.typography.bodyMedium
+            )
         }
-
-        item { Spacer(Modifier.height(Spacing.x4)) }
     }
+}
 
-    private fun LazyListScope.renderWelcomeCard(
-        title: String,
-        modifier: Modifier = Modifier
-    ) {
-        item {
-            Card(modifier) {
+private fun LazyListScope.renderStatsCard(
+    categoryDisplay: String,
+    visitedCount: Int,
+    learnedCount: Int,
+    total: Int,
+    modifier: Modifier = Modifier,
+    onReviewWrongAnswers: () -> Unit = {}
+) {
+    val childModifier = Modifier.fillMaxWidth().padding(horizontal = Spacing.x4)
+
+    item {
+        Card(modifier) {
+            Row(
+                modifier = childModifier.padding(top = Spacing.x4),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 Text(
-                    title,
-                    modifier = Modifier.fillMaxWidth()
-                        .padding(horizontal = Spacing.x4)
-                        .padding(top = Spacing.x4),
+                    categoryDisplay,
+                    modifier = Modifier.padding(end = Spacing.x4).weight(1f),
                     style = MaterialTheme.typography.titleMedium
                 )
 
                 Text(
-                    "Looks like you haven't started. Let's start learning!",
-                    modifier = Modifier.fillMaxWidth().padding(Spacing.x4),
-                    style = MaterialTheme.typography.bodyMedium
+                    "$learnedCount / $total",
+                    style = MaterialTheme.typography.titleMedium
                 )
             }
-        }
-    }
 
-    private fun LazyListScope.renderStatsCard(
-        categoryDisplay: String,
-        visitedCount: Int,
-        learnedCount: Int,
-        total: Int,
-        modifier: Modifier = Modifier,
-        onReviewWrongAnswers: () -> Unit = {}
-    ) {
-        val childModifier = Modifier.fillMaxWidth().padding(horizontal = Spacing.x4)
+            LinearProgressIndicator(
+                progress = learnedCount * 1f / total,
+                modifier = childModifier.padding(top = Spacing.x4),
+                color = MaterialTheme.colorScheme.tertiary,
+                trackColor = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.3f),
+                strokeCap = StrokeCap.Round
+            )
 
-        item {
-            Card(modifier) {
-                Row(
-                    modifier = childModifier.padding(top = Spacing.x4),
-                    verticalAlignment = Alignment.CenterVertically
+            if (visitedCount > learnedCount) {
+                TextButton(
+                    onClick = onReviewWrongAnswers,
+                    modifier = childModifier.padding(bottom = Spacing.x).align(Alignment.End),
                 ) {
-                    Text(
-                        categoryDisplay,
-                        modifier = Modifier.padding(end = Spacing.x4).weight(1f),
-                        style = MaterialTheme.typography.titleMedium
-                    )
-
-                    Text(
-                        "$learnedCount / $total",
-                        style = MaterialTheme.typography.titleMedium
-                    )
+                    Text("Review wrong answers")
                 }
-
-                LinearProgressIndicator(
-                    progress = learnedCount * 1f / total,
-                    modifier = childModifier.padding(top = Spacing.x4),
-                    color = MaterialTheme.colorScheme.tertiary,
-                    trackColor = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.3f),
-                    strokeCap = StrokeCap.Round
+            } else {
+                Text(
+                    "You've been doing great. Keep it going!",
+                    modifier = childModifier.padding(vertical = Spacing.x4),
+                    style = MaterialTheme.typography.bodyMedium
                 )
-
-                if (visitedCount > learnedCount) {
-                    TextButton(
-                        onClick = onReviewWrongAnswers,
-                        modifier = childModifier.padding(bottom = Spacing.x).align(Alignment.End),
-                    ) {
-                        Text("Review wrong answers")
-                    }
-                } else {
-                    Text(
-                        "You've been doing great. Keep it going!",
-                        modifier = childModifier.padding(vertical = Spacing.x4),
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                }
             }
         }
     }

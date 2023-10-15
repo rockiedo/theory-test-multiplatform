@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import com.rdev.tt.TheoryTestApp
+import com.rdev.tt.TheoryTestVoyagerApp
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -12,7 +12,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             val systemUiController = rememberSystemUiController()
 
-            TheoryTestApp {
+            TheoryTestVoyagerApp {
                 systemUiController.setSystemBarsColor(it.surface)
             }
         }

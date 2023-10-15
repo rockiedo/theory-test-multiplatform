@@ -45,7 +45,7 @@ fun TheoryTestApp(
     MaterialTheme(
         colorScheme = colors,
         content = {
-            HomeScreen()
+//            HomeScreen()
         }
     )
 }
@@ -66,9 +66,7 @@ fun TheoryTestVoyagerApp(
     MaterialTheme(
         colorScheme = colors,
         content = {
-            Navigator(screen = HomeScreen) {
-                // TODO: implement
-            }
+            Navigator(screen = HomeScreen)
         }
     )
 }
