@@ -40,7 +40,7 @@ data class SuiteScreen(
 
             is SuiteState.Content -> {
                 (uiState as SuiteState.Content).let { content ->
-                    TestSuiteCompactComp(
+                    SuiteComp(
                         suite,
                         content.questions,
                         isDoingTest,

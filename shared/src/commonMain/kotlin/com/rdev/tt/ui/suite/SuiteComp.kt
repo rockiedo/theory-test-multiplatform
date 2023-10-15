@@ -6,7 +6,6 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -23,7 +22,6 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.ChevronLeft
 import androidx.compose.material.icons.filled.RadioButtonChecked
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -35,66 +33,22 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.rdev.tt._utils.Spacing
-import com.rdev.tt._utils.koinViewModel
 import com.rdev.tt.core_model.Question
 import com.rdev.tt.core_model.Suite
 import com.rdev.tt.ui.question.renderQuestion
 import kotlinx.coroutines.launch
-
-@Composable
-fun TestSuiteScreenLegacy(
-    suite: Suite,
-    onBackPress: () -> Unit,
-    openResult: (List<Question>, Map<Long, Int>) -> Unit,
-    modifier: Modifier = Modifier,
-    isDoingTest: Boolean = false,
-    viewModel: SuiteViewModel = koinViewModel(SuiteViewModel::class)
-) {
-    val uiState by viewModel.uiState.collectAsState()
-
-    LaunchedEffect(viewModel) {
-        viewModel.loadSuite(suite.id)
-    }
-
-    when (uiState) {
-        SuiteState.Loading, SuiteState.Error -> {
-            Box(Modifier.fillMaxSize()) {
-                CircularProgressIndicator(Modifier.align(Alignment.Center))
-            }
-        }
-
-        is SuiteState.Content -> {
-            (uiState as SuiteState.Content).let { content ->
-                TestSuiteCompactComp(
-                    suite,
-                    content.questions,
-                    isDoingTest,
-                    viewModel,
-                    modifier,
-                    onBackPress,
-                    openResult = { answers ->
-                        openResult(content.questions, answers)
-                    }
-                )
-            }
-        }
-    }
-}
 
 private const val DEFAULT_ANSWER = -1
 
@@ -103,7 +57,7 @@ private const val DEFAULT_ANSWER = -1
     ExperimentalMaterial3Api::class,
 )
 @Composable
-fun TestSuiteCompactComp(
+fun SuiteComp(
     suite: Suite,
     questions: List<Question>,
     isDoingTest: Boolean,
