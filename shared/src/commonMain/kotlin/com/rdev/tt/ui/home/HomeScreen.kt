@@ -44,6 +44,7 @@ import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.lifecycle.LifecycleEffect
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.OnBackPressed
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.rdev.tt._utils.Spacing
 import com.rdev.tt._utils.koinViewModel
@@ -63,7 +64,6 @@ private val homeTabs = listOf(
 )
 
 object HomeScreen : Screen {
-    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
@@ -72,11 +72,6 @@ object HomeScreen : Screen {
         LifecycleEffect(
             onDisposed = { viewModel.onCleared() }
         )
-
-        val colorScheme = MaterialTheme.colorScheme
-        val snackbarHostState = remember { SnackbarHostState() }
-        val coroutineScope = rememberCoroutineScope()
-        var selectedTab by remember { mutableStateOf(0) }
 
         val state by viewModel.uiState.collectAsState()
 
@@ -87,63 +82,73 @@ object HomeScreen : Screen {
             return
         }
 
-        val suiteList = remember(selectedTab, state) {
-            val content = state as HomeUiState.Content
-            val tab = homeTabs[selectedTab]
-            content.suites.filter { it.suite.categories.contains(tab.category) }
-        }
-
         (state as? HomeUiState.Content)?.let { content ->
-            Scaffold(
-                snackbarHost = {
-                    SnackbarHost(hostState = snackbarHostState)
-                },
-                topBar = {
-                    CenterAlignedTopAppBar(
-                        title = { Text("Theory Test") }
-                    )
-                }
-            ) { innerPadding ->
-                LazyColumn(
-                    Modifier.fillMaxWidth().padding(innerPadding)
+            HomeComp(content) { suite -> navigator.push(SuiteScreen(suite)) }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun HomeComp(
+    content: HomeUiState.Content,
+    openSuite: (Suite) -> Unit
+) {
+    val colorScheme = MaterialTheme.colorScheme
+    val snackbarHostState = remember { SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
+    var selectedTab by remember { mutableStateOf(0) }
+    val suiteList = remember(selectedTab, content) {
+        val tab = homeTabs[selectedTab]
+        content.suites.filter { it.suite.categories.contains(tab.category) }
+    }
+
+    Scaffold(
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
+        },
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = { Text("Theory Test") }
+            )
+        }
+    ) { innerPadding ->
+        LazyColumn(
+            Modifier.fillMaxWidth().padding(innerPadding)
+        ) {
+            if (content.visitedQuestionCount > 0) {
+                renderStatsCard(
+                    "Basic Theory Test (BTT)",
+                    content.visitedQuestionCount,
+                    content.learnedQuestionCount,
+                    content.allQuestionCount,
+                    Modifier.fillMaxWidth()
+                        .padding(horizontal = Spacing.x4)
+                        .padding(top = Spacing.x4)
                 ) {
-                    if (content.visitedQuestionCount > 0) {
-                        renderStatsCard(
-                            "Basic Theory Test (BTT)",
-                            content.visitedQuestionCount,
-                            content.learnedQuestionCount,
-                            content.allQuestionCount,
-                            Modifier.fillMaxWidth()
-                                .padding(horizontal = Spacing.x4)
-                                .padding(top = Spacing.x4)
-                        ) {
-                            coroutineScope.launch {
-                                snackbarHostState.showSnackbar("This feature is coming soon")
-                            }
-                        }
-                    } else {
-                        renderWelcomeCard(
-                            "Basic Theory Test (BTT)",
-                            Modifier.fillMaxWidth()
-                                .padding(horizontal = Spacing.x4)
-                                .padding(top = Spacing.x4)
-                        )
-                    }
-
-                    item { Spacer(Modifier.height(Spacing.x4)) }
-
-                    renderTabs(
-                        selectedTab = selectedTab,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        selectedTab = it
-                    }
-
-                    renderSuiteList(suiteList, colorScheme) { suite ->
-                        navigator.push(SuiteScreen(suite))
+                    coroutineScope.launch {
+                        snackbarHostState.showSnackbar("This feature is coming soon")
                     }
                 }
+            } else {
+                renderWelcomeCard(
+                    "Basic Theory Test (BTT)",
+                    Modifier.fillMaxWidth()
+                        .padding(horizontal = Spacing.x4)
+                        .padding(top = Spacing.x4)
+                )
             }
+
+            item { Spacer(Modifier.height(Spacing.x4)) }
+
+            renderTabs(
+                selectedTab = selectedTab,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                selectedTab = it
+            }
+
+            renderSuiteList(suiteList, colorScheme) { suite -> openSuite(suite) }
         }
     }
 }

@@ -10,8 +10,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import com.rdev.tt._utils.koinViewModel
+import com.rdev.tt._utils.safePop
 import com.rdev.tt.core_model.Suite
+import com.rdev.tt.ui.review.ReviewScreen
 
 data class SuiteScreen(
     private val suite: Suite,
@@ -19,6 +23,7 @@ data class SuiteScreen(
 ) : Screen {
     @Composable
     override fun Content() {
+        val navigator = LocalNavigator.currentOrThrow
         val viewModel = koinViewModel(SuiteViewModel::class)
         val uiState by viewModel.uiState.collectAsState()
 
@@ -41,11 +46,15 @@ data class SuiteScreen(
                         isDoingTest,
                         viewModel,
                         Modifier.fillMaxSize(),
-                        onBackPress = {
-                            // TODO: implement
-                        },
+                        onBackPress = { navigator.safePop() },
                         openResult = { answers ->
-                            // TODO: implement
+                            navigator.replace(
+                                ReviewScreen(
+                                    suiteName = suite.name,
+                                    questions = content.questions,
+                                    userAnswers = answers
+                                )
+                            )
                         }
                     )
                 }

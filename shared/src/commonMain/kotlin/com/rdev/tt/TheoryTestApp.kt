@@ -17,7 +17,6 @@ import com.rdev.tt.core_model.Question
 import com.rdev.tt.core_model.Suite
 import com.rdev.tt.ui.home.HomeScreen
 import com.rdev.tt.ui.rememberNavController
-import com.rdev.tt.ui.test_result.TestResultScreen
 import com.rdev.tt.ui.suite.TestSuiteScreenLegacy
 
 sealed interface AppNavItem {
@@ -105,13 +104,13 @@ private fun HomeScreen() {
             }
 
             is AppNavItem.TestResult -> {
-                TestResultScreen(
-                    currentNavItem,
-                    onClose = {
-                        navController.navTo(AppNavItem.SuiteList)
-                    },
-                    modifier = Modifier.fillMaxSize()
-                )
+//                TestResultScreen(
+//                    currentNavItem,
+//                    onClose = {
+//                        navController.navTo(AppNavItem.SuiteList)
+//                    },
+//                    modifier = Modifier.fillMaxSize()
+//                )
             }
         }
     }

@@ -1,4 +1,4 @@
-package com.rdev.tt.ui.test_result
+package com.rdev.tt.ui.review
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -32,8 +32,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.rdev.tt.AppNavItem
+import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import com.rdev.tt._utils.Spacing
+import com.rdev.tt._utils.safePop
+import com.rdev.tt.core_model.Question
 import com.rdev.tt.ui.components.IndexedLazyColumn
 import com.rdev.tt.ui.components.rememberIndexedLazyListState
 import com.rdev.tt.ui.question.renderQuestion
@@ -41,18 +45,32 @@ import kotlinx.coroutines.launch
 
 private const val DEFAULT_ANSWER = -1
 
+data class ReviewScreen(
+    private val suiteName: String,
+    private val questions: List<Question>,
+    private val userAnswers: Map<Long, Int>
+) : Screen {
+    @Composable
+    override fun Content() {
+        val navigator = LocalNavigator.currentOrThrow
+
+        ReviewComp(suiteName, questions, userAnswers) {
+            navigator.safePop()
+        }
+    }
+}
+
 @OptIn(
     ExperimentalMaterial3Api::class,
     ExperimentalFoundationApi::class
 )
 @Composable
-fun TestResultScreen(
-    navItem: AppNavItem.TestResult,
-    onClose: () -> Unit,
-    modifier: Modifier = Modifier
+fun ReviewComp(
+    suiteName: String,
+    questions: List<Question>,
+    userAnswers: Map<Long, Int>,
+    onClose: () -> Unit
 ) {
-    val (suiteName, questions, userAnswers) = navItem
-
     val wrongCount = remember {
         questions.count { userAnswers[it.id] != it.answerIdx }
     }
@@ -61,7 +79,6 @@ fun TestResultScreen(
     var isDropdownMenuExpanded by remember { mutableStateOf(false) }
 
     Scaffold(
-        modifier,
         topBar = {
             Surface(shadowElevation = 8.dp) {
                 TopAppBar(
@@ -164,7 +181,7 @@ fun TestResultScreen(
 }
 
 @Composable
-fun getQuestionColor(isWrongAnswer: Boolean): Color {
+private fun getQuestionColor(isWrongAnswer: Boolean): Color {
     return when {
         !isWrongAnswer -> Color.Unspecified
         isSystemInDarkTheme() -> MaterialTheme.colorScheme.error
