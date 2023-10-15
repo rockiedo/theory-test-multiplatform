@@ -41,7 +41,7 @@ data class SuiteScreen(
             is SuiteState.Content -> {
                 (uiState as SuiteState.Content).let { content ->
                     SuiteComp(
-                        suite,
+                        suite.name,
                         content.questions,
                         isDoingTest,
                         viewModel,

@@ -46,7 +46,6 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.rdev.tt._utils.Spacing
 import com.rdev.tt.core_model.Question
-import com.rdev.tt.core_model.Suite
 import com.rdev.tt.ui.question.renderQuestion
 import kotlinx.coroutines.launch
 
@@ -58,7 +57,7 @@ private const val DEFAULT_ANSWER = -1
 )
 @Composable
 fun SuiteComp(
-    suite: Suite,
+    suiteName: String,
     questions: List<Question>,
     isDoingTest: Boolean,
     viewModel: SuiteViewModel,
@@ -80,7 +79,7 @@ fun SuiteComp(
                 TopAppBar(
                     title = {
                         Text(
-                            suite.name,
+                            suiteName,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                             modifier = Modifier.padding(end = Spacing.x2)

@@ -1,6 +1,7 @@
 package com.rdev.tt.ui.home
 
 import com.rdev.tt.core_model.Category
+import com.rdev.tt.core_model.Question
 import com.rdev.tt.core_model.Suite
 import com.rdev.tt.data.AppRepository
 import com.rdev.tt.data.mapper.toModel
@@ -40,6 +41,10 @@ class HomeViewModel(
         viewModelScope.launch {
             _categoryFlow.collect { loadSuites(it) }
         }
+    }
+
+    suspend fun getWronglyAnsweredQuestions(): List<Question> {
+        return appRepo.getWronglyAnsweredQuestions().getOrElse { emptyList() }
     }
 
     private fun loadSuites(category: @Category String) {

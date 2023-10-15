@@ -44,12 +44,12 @@ import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.lifecycle.LifecycleEffect
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.OnBackPressed
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.rdev.tt._utils.Spacing
 import com.rdev.tt._utils.koinViewModel
 import com.rdev.tt.core_model.Category
 import com.rdev.tt.core_model.Suite
+import com.rdev.tt.ui.revision.RevisionScreen
 import com.rdev.tt.ui.suite.SuiteScreen
 import kotlinx.coroutines.launch
 
@@ -68,12 +68,12 @@ object HomeScreen : Screen {
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
         val viewModel = koinViewModel(HomeViewModel::class)
+        val state by viewModel.uiState.collectAsState()
+        val coroutineScope = rememberCoroutineScope()
 
         LifecycleEffect(
             onDisposed = { viewModel.onCleared() }
         )
-
-        val state by viewModel.uiState.collectAsState()
 
         if (state !is HomeUiState.Content) {
             Box(Modifier.fillMaxSize()) {
@@ -83,7 +83,16 @@ object HomeScreen : Screen {
         }
 
         (state as? HomeUiState.Content)?.let { content ->
-            HomeComp(content) { suite -> navigator.push(SuiteScreen(suite)) }
+            HomeComp(
+                content = content,
+                openSuite = { suite -> navigator.push(SuiteScreen(suite)) },
+                reviewWronglyAnsweredQuestions = {
+                    coroutineScope.launch {
+                        val questions = viewModel.getWronglyAnsweredQuestions()
+                        navigator.push(RevisionScreen(questions))
+                    }
+                }
+            )
         }
     }
 }
@@ -92,11 +101,11 @@ object HomeScreen : Screen {
 @Composable
 private fun HomeComp(
     content: HomeUiState.Content,
-    openSuite: (Suite) -> Unit
+    openSuite: (Suite) -> Unit,
+    reviewWronglyAnsweredQuestions: () -> Unit
 ) {
     val colorScheme = MaterialTheme.colorScheme
     val snackbarHostState = remember { SnackbarHostState() }
-    val coroutineScope = rememberCoroutineScope()
     var selectedTab by remember { mutableStateOf(0) }
     val suiteList = remember(selectedTab, content) {
         val tab = homeTabs[selectedTab]
@@ -126,9 +135,7 @@ private fun HomeComp(
                         .padding(horizontal = Spacing.x4)
                         .padding(top = Spacing.x4)
                 ) {
-                    coroutineScope.launch {
-                        snackbarHostState.showSnackbar("This feature is coming soon")
-                    }
+                    reviewWronglyAnsweredQuestions()
                 }
             } else {
                 renderWelcomeCard(
@@ -288,7 +295,7 @@ private fun LazyListScope.renderStatsCard(
                     onClick = onReviewWrongAnswers,
                     modifier = childModifier.padding(bottom = Spacing.x).align(Alignment.End),
                 ) {
-                    Text("Review wrong answers")
+                    Text("Revise wrong answers")
                 }
             } else {
                 Text(

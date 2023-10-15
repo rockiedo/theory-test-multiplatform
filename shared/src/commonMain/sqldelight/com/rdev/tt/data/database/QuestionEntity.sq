@@ -25,3 +25,18 @@ WHERE id IN ?;
 getQuestionIdsByCategory:
 SELECT id FROM QuestionEntity
 WHERE categories LIKE ('%' || ? || '%');
+
+getWronglyAnsweredQuestions:
+SELECT *
+FROM QuestionEntity AS q JOIN HistoryEntity AS h
+ON q.id = h.questionId
+GROUP BY q.id
+HAVING SUM(CASE WHEN h.isCorrect == 0 THEN 1 ELSE 0 END) > SUM(CASE WHEN h.isCorrect == 1 THEN 1 ELSE 0 END);
+
+filterWronglyAnsweredQuestions:
+SELECT q.id
+FROM QuestionEntity AS q JOIN HistoryEntity AS h
+ON q.id = h.questionId
+WHERE q.id IN ?
+GROUP BY q.id
+HAVING SUM(CASE WHEN h.isCorrect == 0 THEN 1 ELSE 0 END) > SUM(CASE WHEN h.isCorrect == 1 THEN 1 ELSE 0 END);

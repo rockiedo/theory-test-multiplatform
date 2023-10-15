@@ -67,12 +67,27 @@ class AppRepository(
     }
 
     suspend fun countVisitedQuestions(): Result<Long> {
-        return kotlin.runCatching {
+        return runCatching {
             db.historyEntityQueries.countVisitedQuestions().executeAsOne()
         }
     }
 
-    fun getImageDir(category: @Category String): String {
-        return ".assets/$category/images"
+    suspend fun getWronglyAnsweredQuestions(): Result<List<Question>> {
+        return runCatching {
+            db.questionEntityQueries
+                .getWronglyAnsweredQuestions()
+                .executeAsList()
+                .map {
+                    Question(
+                        id = it.id,
+                        question = it.question,
+                        choices = it.choices,
+                        answerIdx = it.answerIdx.toInt(),
+                        explanation = it.explanation,
+                        image = it.image,
+                        categories = it.categories,
+                    )
+                }
+        }
     }
 }
