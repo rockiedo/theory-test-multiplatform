@@ -12,9 +12,6 @@ import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.core.screen.Screen
 import com.rdev.tt._utils.koinViewModel
 import com.rdev.tt.core_model.Suite
-import com.rdev.tt.ui.test_suite.TestSuiteCompactComp
-import com.rdev.tt.ui.test_suite.TestSuiteState
-import com.rdev.tt.ui.test_suite.TestSuiteViewModel
 
 data class SuiteScreen(
     private val suite: Suite,
@@ -22,22 +19,22 @@ data class SuiteScreen(
 ) : Screen {
     @Composable
     override fun Content() {
-        val viewModel = koinViewModel(TestSuiteViewModel::class)
+        val viewModel = koinViewModel(SuiteViewModel::class)
         val uiState by viewModel.uiState.collectAsState()
 
         LaunchedEffect(viewModel) {
-            viewModel.loadTestSuite(suite.id)
+            viewModel.loadSuite(suite.id)
         }
 
         when (uiState) {
-            TestSuiteState.Loading, TestSuiteState.Error -> {
+            SuiteState.Loading, SuiteState.Error -> {
                 Box(Modifier.fillMaxSize()) {
                     CircularProgressIndicator(Modifier.align(Alignment.Center))
                 }
             }
 
-            is TestSuiteState.Content -> {
-                (uiState as TestSuiteState.Content).let { content ->
+            is SuiteState.Content -> {
+                (uiState as SuiteState.Content).let { content ->
                     TestSuiteCompactComp(
                         suite,
                         content.questions,

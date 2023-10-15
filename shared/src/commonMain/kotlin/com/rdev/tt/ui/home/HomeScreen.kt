@@ -43,10 +43,13 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.lifecycle.LifecycleEffect
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import com.rdev.tt._utils.Spacing
 import com.rdev.tt._utils.koinViewModel
 import com.rdev.tt.core_model.Category
 import com.rdev.tt.core_model.Suite
+import com.rdev.tt.ui.suite.SuiteScreen
 import kotlinx.coroutines.launch
 
 private data class HomeTab(
@@ -63,6 +66,7 @@ object HomeScreen : Screen {
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     override fun Content() {
+        val navigator = LocalNavigator.currentOrThrow
         val viewModel = koinViewModel(HomeViewModel::class)
 
         LifecycleEffect(
@@ -136,7 +140,7 @@ object HomeScreen : Screen {
                     }
 
                     renderSuiteList(suiteList, colorScheme) { suite ->
-                        // TODO: implement
+                        navigator.push(SuiteScreen(suite))
                     }
                 }
             }

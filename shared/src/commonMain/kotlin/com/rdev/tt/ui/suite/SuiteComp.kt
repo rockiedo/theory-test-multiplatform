@@ -1,4 +1,4 @@
-package com.rdev.tt.ui.test_suite
+package com.rdev.tt.ui.suite
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandIn
@@ -63,23 +63,23 @@ fun TestSuiteScreenLegacy(
     openResult: (List<Question>, Map<Long, Int>) -> Unit,
     modifier: Modifier = Modifier,
     isDoingTest: Boolean = false,
-    viewModel: TestSuiteViewModel = koinViewModel(TestSuiteViewModel::class)
+    viewModel: SuiteViewModel = koinViewModel(SuiteViewModel::class)
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
     LaunchedEffect(viewModel) {
-        viewModel.loadTestSuite(suite.id)
+        viewModel.loadSuite(suite.id)
     }
 
     when (uiState) {
-        TestSuiteState.Loading, TestSuiteState.Error -> {
+        SuiteState.Loading, SuiteState.Error -> {
             Box(Modifier.fillMaxSize()) {
                 CircularProgressIndicator(Modifier.align(Alignment.Center))
             }
         }
 
-        is TestSuiteState.Content -> {
-            (uiState as TestSuiteState.Content).let { content ->
+        is SuiteState.Content -> {
+            (uiState as SuiteState.Content).let { content ->
                 TestSuiteCompactComp(
                     suite,
                     content.questions,
@@ -107,7 +107,7 @@ fun TestSuiteCompactComp(
     suite: Suite,
     questions: List<Question>,
     isDoingTest: Boolean,
-    viewModel: TestSuiteViewModel,
+    viewModel: SuiteViewModel,
     modifier: Modifier = Modifier,
     onBackPress: () -> Unit = {},
     openResult: (Map<Long, Int>) -> Unit = {}

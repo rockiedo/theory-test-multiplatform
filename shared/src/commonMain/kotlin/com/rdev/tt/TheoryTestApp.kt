@@ -9,6 +9,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.navigator.Navigator
+import cafe.adriel.voyager.transitions.SlideTransition
 import com.rdev.tt._utils.DarkColors
 import com.rdev.tt._utils.LightColors
 import com.rdev.tt.core_model.Category
@@ -17,7 +18,7 @@ import com.rdev.tt.core_model.Suite
 import com.rdev.tt.ui.home.HomeScreen
 import com.rdev.tt.ui.rememberNavController
 import com.rdev.tt.ui.test_result.TestResultScreen
-import com.rdev.tt.ui.test_suite.TestSuiteScreenLegacy
+import com.rdev.tt.ui.suite.TestSuiteScreenLegacy
 
 sealed interface AppNavItem {
     data object SuiteList : AppNavItem
@@ -66,7 +67,9 @@ fun TheoryTestVoyagerApp(
     MaterialTheme(
         colorScheme = colors,
         content = {
-            Navigator(screen = HomeScreen)
+            Navigator(screen = HomeScreen) { navigator ->
+                SlideTransition(navigator)
+            }
         }
     )
 }
