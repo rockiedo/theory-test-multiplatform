@@ -22,11 +22,17 @@ class SuiteViewModel(
 
     fun loadSuite(suiteId: Long) {
         viewModelScope.launch(Dispatchers.Default) {
-            runCatching {
+            kotlin.runCatching {
                 val questions = appRepo.loadQuestionFromSuite(suiteId).getOrThrow()
                 if (questions.isEmpty()) throw IllegalStateException("Empty question list")
 
-                _uiState.value = SuiteState.Content(questions)
+                val toLearnIds =
+                    appRepo.filterWronglyAnsweredQuestions(questions.map { it.id }).getOrThrow()
+
+                val toLearnQuestions = questions.filter { it.id in toLearnIds }
+                val learnedQuestions = questions.filter { it.id !in toLearnIds }.shuffled()
+
+                _uiState.value = SuiteState.Content(toLearnQuestions + learnedQuestions)
             }.onFailure {
                 _uiState.value = SuiteState.Error
             }

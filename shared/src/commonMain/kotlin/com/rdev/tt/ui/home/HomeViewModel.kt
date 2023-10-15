@@ -51,7 +51,7 @@ class HomeViewModel(
         _uiState.value = HomeUiState.Loading
 
         viewModelScope.launch(Dispatchers.IO) {
-            runCatching {
+            kotlin.runCatching {
                 val suites = doLoadSuites(category)
                 val visitedCount = appRepo.countVisitedQuestions().getOrThrow().toInt()
 

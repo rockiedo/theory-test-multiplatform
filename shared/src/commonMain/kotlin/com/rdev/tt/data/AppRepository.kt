@@ -13,7 +13,7 @@ class AppRepository(
     private val dateTimeUtils: DateTimeUtils
 ) {
     suspend fun getAllSuites(category: @Category String): Result<List<SuiteEntity>> {
-        return runCatching {
+        return kotlin.runCatching {
             db.suiteEntityQueries
                 .getAllSuites(category)
                 .executeAsList()
@@ -21,7 +21,7 @@ class AppRepository(
     }
 
     suspend fun getQuestionIdsFromSuite(suiteId: Long): Result<List<Long>> {
-        return runCatching {
+        return kotlin.runCatching {
             db.questionSuiteEntityQueries
                 .getQuestionIdsFromSuite(suiteId)
                 .executeAsList()
@@ -29,7 +29,7 @@ class AppRepository(
     }
 
     suspend fun loadQuestionFromSuite(suiteId: Long): Result<List<Question>> {
-        return runCatching {
+        return kotlin.runCatching {
             val result = mutableListOf<Question>()
 
             db.transaction {
@@ -50,7 +50,7 @@ class AppRepository(
     }
 
     suspend fun recordAnswer(questionId: Long, isCorrect: Boolean): Result<Unit> {
-        return runCatching {
+        return kotlin.runCatching {
             db.historyEntityQueries
                 .insertHistory(questionId, isCorrect, dateTimeUtils.getCurrentTimestamp())
         }
@@ -59,7 +59,7 @@ class AppRepository(
     suspend fun getLearnedQuestionIds(
         eligibleQuestionIds: List<Long>
     ): Result<List<Long>> {
-        return runCatching {
+        return kotlin.runCatching {
             db.historyEntityQueries
                 .getLearnedQuestionIdsFilteredByIds(eligibleQuestionIds)
                 .executeAsList()
@@ -67,13 +67,13 @@ class AppRepository(
     }
 
     suspend fun countVisitedQuestions(): Result<Long> {
-        return runCatching {
+        return kotlin.runCatching {
             db.historyEntityQueries.countVisitedQuestions().executeAsOne()
         }
     }
 
     suspend fun getWronglyAnsweredQuestions(): Result<List<Question>> {
-        return runCatching {
+        return kotlin.runCatching {
             db.questionEntityQueries
                 .getWronglyAnsweredQuestions()
                 .executeAsList()
@@ -88,6 +88,14 @@ class AppRepository(
                         categories = it.categories,
                     )
                 }
+        }
+    }
+    
+    suspend fun filterWronglyAnsweredQuestions(ids: List<Long>): Result<List<Long>> {
+        return kotlin.runCatching {
+            db.questionEntityQueries
+                .filterWronglyAnsweredQuestions(ids)
+                .executeAsList()
         }
     }
 }
