@@ -43,6 +43,10 @@ kotlin {
                 api(libs.bundles.mokoMvvm)
                 api(libs.windowSizeClass)
                 api(libs.dateTime)
+
+                implementation(libs.voyager.navigator)
+                implementation(libs.voyager.transitions)
+                implementation(libs.voyager.koin)
             }
         }
         val androidMain by getting {
