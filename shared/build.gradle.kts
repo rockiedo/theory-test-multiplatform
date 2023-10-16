@@ -40,7 +40,6 @@ kotlin {
                 api(libs.bundles.ktor)
                 api(libs.kotlinSerialization)
                 api(libs.koinCore)
-                api(libs.bundles.mokoMvvm)
                 api(libs.windowSizeClass)
                 api(libs.dateTime)
 
