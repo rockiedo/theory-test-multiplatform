@@ -23,8 +23,6 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
@@ -35,6 +33,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -100,17 +99,13 @@ private fun HomeComp(
     reviewWronglyAnsweredQuestions: () -> Unit
 ) {
     val colorScheme = MaterialTheme.colorScheme
-    val snackbarHostState = remember { SnackbarHostState() }
-    var selectedTab by remember { mutableStateOf(0) }
+    var selectedTab by rememberSaveable { mutableStateOf(0) }
     val suiteList = remember(selectedTab, content) {
         val tab = homeTabs[selectedTab]
         content.suites.filter { it.suite.categories.contains(tab.category) }
     }
 
     Scaffold(
-        snackbarHost = {
-            SnackbarHost(hostState = snackbarHostState)
-        },
         topBar = {
             CenterAlignedTopAppBar(
                 title = { Text("Theory Test") }
