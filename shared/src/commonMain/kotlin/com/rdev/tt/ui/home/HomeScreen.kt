@@ -41,12 +41,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.core.lifecycle.LifecycleEffect
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.koin.getScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.rdev.tt._utils.Spacing
-import com.rdev.tt._utils.koinViewModel
 import com.rdev.tt.core_model.Category
 import com.rdev.tt.core_model.Suite
 import com.rdev.tt.ui.revision.RevisionScreen
@@ -67,13 +66,9 @@ object HomeScreen : Screen {
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
-        val viewModel = koinViewModel(HomeViewModel::class)
+        val viewModel = getScreenModel<HomeViewModel>()
         val state by viewModel.uiState.collectAsState()
         val coroutineScope = rememberCoroutineScope()
-
-        LifecycleEffect(
-            onDisposed = { viewModel.onCleared() }
-        )
 
         if (state !is HomeUiState.Content) {
             Box(Modifier.fillMaxSize()) {

@@ -4,9 +4,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.koin.getScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import com.rdev.tt._utils.koinViewModel
 import com.rdev.tt._utils.safePop
 import com.rdev.tt.core_model.Question
 import com.rdev.tt.ui.review.ReviewScreen
@@ -21,7 +21,7 @@ data class RevisionScreen(
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
-        val viewModel = koinViewModel(SuiteViewModel::class)
+        val viewModel = getScreenModel<SuiteViewModel>()
 
         SuiteComp(
             suiteName = SUITE_NAME,

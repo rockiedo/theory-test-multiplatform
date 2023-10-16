@@ -1,11 +1,12 @@
 package com.rdev.tt.ui.home
 
+import cafe.adriel.voyager.core.model.ScreenModel
+import cafe.adriel.voyager.core.model.coroutineScope
 import com.rdev.tt.core_model.Category
 import com.rdev.tt.core_model.Question
 import com.rdev.tt.core_model.Suite
 import com.rdev.tt.data.AppRepository
 import com.rdev.tt.data.mapper.toModel
-import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,14 +32,14 @@ sealed interface HomeUiState {
 
 class HomeViewModel(
     private val appRepo: AppRepository
-) : ViewModel() {
+) : ScreenModel {
     private val _categoryFlow = MutableStateFlow<@Category String>(Category.BTT)
 
     private val _uiState = MutableStateFlow<HomeUiState>(HomeUiState.Loading)
     val uiState: StateFlow<HomeUiState> = _uiState
 
     init {
-        viewModelScope.launch {
+        coroutineScope.launch {
             _categoryFlow.collect { loadSuites(it) }
         }
     }
@@ -50,7 +51,7 @@ class HomeViewModel(
     private fun loadSuites(category: @Category String) {
         _uiState.value = HomeUiState.Loading
 
-        viewModelScope.launch(Dispatchers.IO) {
+        coroutineScope.launch(Dispatchers.IO) {
             kotlin.runCatching {
                 val suites = doLoadSuites(category)
                 val visitedCount = appRepo.countVisitedQuestions().getOrThrow().toInt()
