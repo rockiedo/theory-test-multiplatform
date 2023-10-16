@@ -7,6 +7,8 @@ import com.rdev.tt.core_model.Question
 import com.rdev.tt.core_model.Suite
 import com.rdev.tt.data.AppRepository
 import com.rdev.tt.data.mapper.toModel
+import com.rdev.tt.ui.BusEvent
+import com.rdev.tt.ui.NavigationBus
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,7 +33,8 @@ sealed interface HomeUiState {
 }
 
 class HomeViewModel(
-    private val appRepo: AppRepository
+    private val appRepo: AppRepository,
+    private val navigationBus: NavigationBus
 ) : ScreenModel {
     private val _categoryFlow = MutableStateFlow<@Category String>(Category.BTT)
 
@@ -40,7 +43,17 @@ class HomeViewModel(
 
     init {
         coroutineScope.launch {
-            _categoryFlow.collect { loadSuites(it) }
+            _categoryFlow.collect {
+                _uiState.value = HomeUiState.Loading
+                loadSuites(it)
+            }
+        }
+
+        coroutineScope.launch {
+            navigationBus.eventStream.collect { event ->
+                if (event !is BusEvent.HistoryChanged) return@collect
+                loadSuites(_categoryFlow.value)
+            }
         }
     }
 
@@ -49,8 +62,6 @@ class HomeViewModel(
     }
 
     private fun loadSuites(category: @Category String) {
-        _uiState.value = HomeUiState.Loading
-
         coroutineScope.launch(Dispatchers.IO) {
             kotlin.runCatching {
                 val suites = doLoadSuites(category)
