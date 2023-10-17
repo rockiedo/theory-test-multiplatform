@@ -86,7 +86,9 @@ object HomeScreen : Screen {
                 (state as? HomeUiState.Content)?.let { content ->
                     HomeComp(
                         content = content,
-                        openSuite = { suite -> navigator.push(SuiteScreen(suite)) },
+                        openSuite = { suite, isDoingTest ->
+                            navigator.push(SuiteScreen(suite, isDoingTest))
+                        },
                         reviewWronglyAnsweredQuestions = {
                             coroutineScope.launch {
                                 val questions = viewModel.getWronglyAnsweredQuestions()

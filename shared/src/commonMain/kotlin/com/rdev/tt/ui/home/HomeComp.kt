@@ -50,7 +50,7 @@ private val homeTabs = listOf(
 @Composable
 fun HomeComp(
     content: HomeUiState.Content,
-    openSuite: (Suite) -> Unit,
+    openSuite: (Suite, Boolean) -> Unit,
     reviewWronglyAnsweredQuestions: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -60,7 +60,6 @@ fun HomeComp(
         val tab = homeTabs[selectedTab]
         content.suites.filter { it.suite.categories.contains(tab.category) }
     }
-
 
     LazyColumn(modifier) {
         if (content.visitedQuestionCount > 0) {
@@ -93,7 +92,9 @@ fun HomeComp(
             selectedTab = it
         }
 
-        renderSuiteList(suiteList, colorScheme) { suite -> openSuite(suite) }
+        renderSuiteList(suiteList, colorScheme) { suite ->
+            openSuite(suite, homeTabs[selectedTab].category == Category.TEST)
+        }
     }
 }
 
