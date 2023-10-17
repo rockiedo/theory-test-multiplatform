@@ -1,6 +1,7 @@
 package com.rdev.tt.ui.home
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -12,7 +13,6 @@ import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -29,6 +29,7 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.rdev.tt.ui.revision.RevisionScreen
 import com.rdev.tt.ui.suite.SuiteScreen
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 object HomeScreen : Screen {
@@ -39,20 +40,24 @@ object HomeScreen : Screen {
         val viewModel = getScreenModel<HomeViewModel>()
 
         val state by viewModel.uiState.collectAsState()
+        val currentCategory by viewModel.categoryFlow.collectAsState()
         val coroutineScope = rememberCoroutineScope()
         val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-
-        if (state !is HomeUiState.Content) {
-            Box(Modifier.fillMaxSize()) {
-                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-            }
-            return
-        }
 
         ModalNavigationDrawer(
             drawerState = drawerState,
             drawerContent = {
-                HomeDrawerComp()
+                HomeDrawerComp(
+                    selectedCategory = currentCategory,
+                    onSelect = {
+                        coroutineScope.launch {
+                            drawerState.close()
+                            delay(200)
+                            viewModel.setCategory(it)
+                        }
+                    },
+                    modifier = Modifier.fillMaxHeight().fillMaxWidth(0.9f)
+                )
             }
         ) {
             Scaffold(
@@ -72,7 +77,7 @@ object HomeScreen : Screen {
                 }
             ) { innerPadding ->
                 if (state !is HomeUiState.Content) {
-                    Box(Modifier.fillMaxSize()) {
+                    Box(Modifier.fillMaxSize().padding(innerPadding)) {
                         CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
                     }
                     return@Scaffold

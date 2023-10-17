@@ -10,8 +10,10 @@ object Spacing {
 
     val x = scale()
     val x2 = scale(2)
+    val x3 = scale(3)
     val x4 = scale(4)
     val x6 = scale(6)
+    val x7 = scale(7)
     val x8 = scale(8)
 }
 

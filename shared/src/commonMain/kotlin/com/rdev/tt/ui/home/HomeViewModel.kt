@@ -25,6 +25,7 @@ sealed interface HomeUiState {
     data object Loading : HomeUiState
     data class Error(val e: Throwable) : HomeUiState
     data class Content(
+        val categoryDisplay: String,
         val suites: List<SuiteItem>,
         val allQuestionCount: Int,
         val learnedQuestionCount: Int,
@@ -37,6 +38,7 @@ class HomeViewModel(
     private val navigationBus: NavigationBus
 ) : ScreenModel {
     private val _categoryFlow = MutableStateFlow<@Category String>(Category.BTT)
+    val categoryFlow: StateFlow<@Category String> = _categoryFlow
 
     private val _uiState = MutableStateFlow<HomeUiState>(HomeUiState.Loading)
     val uiState: StateFlow<HomeUiState> = _uiState
@@ -57,6 +59,10 @@ class HomeViewModel(
         }
     }
 
+    fun setCategory(category: @Category String) {
+        _categoryFlow.value = category
+    }
+
     suspend fun getWronglyAnsweredQuestions(): List<Question> {
         return appRepo.getWronglyAnsweredQuestions().getOrElse { emptyList() }
     }
@@ -67,7 +73,14 @@ class HomeViewModel(
                 val suites = doLoadSuites(category)
                 val visitedCount = appRepo.countVisitedQuestions().getOrThrow().toInt()
 
+                val categoryDisplay = when (category) {
+                    Category.BTT -> "Basic Theory Test (BTT)"
+                    Category.FTT -> "Final Theory Test (FTT)"
+                    else -> "Learning progress"
+                }
+
                 _uiState.value = HomeUiState.Content(
+                    categoryDisplay = categoryDisplay,
                     suites = suites,
                     allQuestionCount = suites.sumOf { it.questionCount },
                     learnedQuestionCount = suites.sumOf { it.learnedQuestionCount },

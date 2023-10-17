@@ -65,7 +65,7 @@ fun HomeComp(
     LazyColumn(modifier) {
         if (content.visitedQuestionCount > 0) {
             renderStatsCard(
-                "Basic Theory Test (BTT)",
+                content.categoryDisplay,
                 content.visitedQuestionCount,
                 content.learnedQuestionCount,
                 content.allQuestionCount,
