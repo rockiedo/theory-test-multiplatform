@@ -4,8 +4,9 @@
     <application
         android:name=".TheoryTestApplication"
         android:allowBackup="false"
-        android:label="Theory Test"
+        android:label="DTT (SG)"
         android:supportsRtl="true"
+        android:icon="@drawable/ic_launcher"
         android:theme="@style/AppTheme">
         <activity
             android:name=".MainActivity"
