@@ -376,7 +376,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1.1;
+				MARKETING_VERSION = 1.2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.rdev.tt;
 				PRODUCT_NAME = DTT;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -402,7 +402,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1.1;
+				MARKETING_VERSION = 1.2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.rdev.tt;
 				PRODUCT_NAME = DTT;
 				PROVISIONING_PROFILE_SPECIFIER = "";

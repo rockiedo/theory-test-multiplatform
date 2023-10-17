@@ -11,6 +11,7 @@ import com.rdev.tt.ui.BusEvent
 import com.rdev.tt.ui.NavigationBus
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -78,6 +79,8 @@ class HomeViewModel(
                     Category.FTT -> "Final Theory Test (FTT)"
                     else -> "Learning progress"
                 }
+
+                delay(200)
 
                 _uiState.value = HomeUiState.Content(
                     categoryDisplay = categoryDisplay,
