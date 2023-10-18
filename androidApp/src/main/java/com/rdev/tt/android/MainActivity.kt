@@ -10,6 +10,7 @@ import com.rdev.tt.TheoryTestApp
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
+        actionBar?.hide()
         super.onCreate(savedInstanceState)
 
         setContent {
