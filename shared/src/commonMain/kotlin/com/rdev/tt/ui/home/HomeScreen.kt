@@ -75,7 +75,7 @@ object HomeScreen : Screen {
                             viewModel.setCategory(it)
                         }
                     },
-                    modifier = Modifier.fillMaxHeight().fillMaxWidth(0.9f)
+                    modifier = Modifier.fillMaxHeight().fillMaxWidth(0.8f)
                 )
             }
         ) {

@@ -76,7 +76,7 @@ fun HomeComp(
             }
         } else {
             renderWelcomeCard(
-                "Basic Theory Test (BTT)",
+                content.categoryDisplay,
                 Modifier.fillMaxWidth()
                     .padding(horizontal = Spacing.x4)
                     .padding(top = Spacing.x4)
