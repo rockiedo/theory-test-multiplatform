@@ -7,6 +7,10 @@ import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.rdev.tt._utils.Spacing
 import com.rdev.tt.core_model.Category
@@ -23,7 +27,7 @@ private val items = listOf(
 
 @Composable
 fun HomeDrawerComp(
-    selectedCategory: @Category String,
+    getSelectedCategory: () -> @Category String,
     onSelect: (@Category String) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -42,7 +46,7 @@ fun HomeDrawerComp(
                         style = MaterialTheme.typography.labelMedium
                     )
                 },
-                selected = item.category == selectedCategory,
+                selected = item.category == getSelectedCategory(),
                 onClick = { onSelect(item.category) },
                 modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
             )

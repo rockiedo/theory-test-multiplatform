@@ -18,11 +18,16 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import cafe.adriel.voyager.core.lifecycle.LifecycleEffect
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.getScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -42,13 +47,27 @@ object HomeScreen : Screen {
         val state by viewModel.uiState.collectAsState()
         val currentCategory by viewModel.categoryFlow.collectAsState()
         val coroutineScope = rememberCoroutineScope()
+        var didLaunch by remember { mutableStateOf(false) }
         val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+
+        // On iOS, drawerContent is drawn and dismissed immediately at first launch.
+        // This hack is to overcome that flaky behaviour.
+        LifecycleEffect(
+            onStarted = {
+                coroutineScope.launch {
+                    delay(300)
+                    didLaunch = true
+                }
+            }
+        )
 
         ModalNavigationDrawer(
             drawerState = drawerState,
             drawerContent = {
+                if (!didLaunch) return@ModalNavigationDrawer
+
                 HomeDrawerComp(
-                    selectedCategory = currentCategory,
+                    getSelectedCategory = { currentCategory },
                     onSelect = {
                         coroutineScope.launch {
                             drawerState.close()
@@ -67,7 +86,10 @@ object HomeScreen : Screen {
                         navigationIcon = {
                             IconButton(
                                 onClick = {
-                                    coroutineScope.launch { drawerState.open() }
+                                    coroutineScope.launch {
+                                        didLaunch = true
+                                        drawerState.open()
+                                    }
                                 }
                             ) {
                                 Icon(Icons.Filled.Menu, null)
