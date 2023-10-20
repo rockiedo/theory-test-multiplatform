@@ -1,5 +1,6 @@
 package com.rdev.tt.ui.question
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -70,6 +71,12 @@ fun LazyListScope.renderQuestion(
     }
 
     itemsIndexed(question.choices) { index, choice ->
+        val choiceState = when {
+            index == question.answerIdx -> ChoiceState.Correct
+            index == selection && index != question.answerIdx -> ChoiceState.Incorrect
+            else -> ChoiceState.Neutral
+        }
+
         if (isDoingTest) {
             TestingChoiceComp(
                 indexer = indexers[index],
@@ -82,14 +89,26 @@ fun LazyListScope.renderQuestion(
             ChoiceComp(
                 indexer = indexers[index],
                 content = choice,
-                choiceState = when {
-                    index == question.answerIdx -> ChoiceState.Correct
-                    index == selection && index != question.answerIdx -> ChoiceState.Incorrect
-                    else -> ChoiceState.Neutral
-                },
+                choiceState = choiceState,
                 shouldHighlight = hasUserInput,
                 onClick = { onAnswer(question.id, index) },
                 modifier = Modifier.fillMaxWidth().padding(horizontal = Spacing.x4)
+            )
+        }
+
+        // Display explanation below the correct answer if applicable
+        AnimatedVisibility(
+            visible = !isDoingTest
+                    && hasUserInput
+                    && choiceState == ChoiceState.Correct
+                    && !question.explanation.isNullOrEmpty(),
+            modifier = Modifier.fillMaxWidth()
+                .padding(horizontal = Spacing.x6)
+                .padding(top = Spacing.x2),
+        ) {
+            Text(
+                question.explanation.orEmpty(),
+                style = MaterialTheme.typography.bodyMedium
             )
         }
 
