@@ -1,5 +1,5 @@
 [versions]
-kotlin = "1.9.10"
+kotlin = "2.0.10"
 agp = "8.5.2"
 compose = "1.6.8"
 coroutines = "1.8.0"
@@ -93,9 +93,10 @@ mokoMvvm = [
 [plugins]
 jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 nativeCocoaPods = { id = "org.jetbrains.kotlin.native.cocoapods", version.ref = "kotlin" }
 kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-compose = { id = "org.jetbrains.compose", version = "1.6.11" }
+jetbrainsCompose = { id = "org.jetbrains.compose", version = "1.6.11" }
 android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 androidBase = { id = "com.android.base", version.ref = "agp" }
 androidApplication = { id = "com.android.application", version.ref = "agp" }

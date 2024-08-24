@@ -2,8 +2,9 @@ plugins {
     kotlin("multiplatform")
     kotlin("native.cocoapods")
     kotlin("plugin.serialization")
+    alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.jetbrainsCompose)
     id("com.android.library")
-    id("org.jetbrains.compose")
     id("app.cash.sqldelight")
 }
 

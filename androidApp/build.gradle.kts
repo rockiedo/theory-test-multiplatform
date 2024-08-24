@@ -4,6 +4,8 @@ import java.io.FileInputStream
 plugins {
     id("com.android.application")
     kotlin("android")
+    alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.jetbrainsCompose)
 }
 
 val keystorePropertiesFile = rootProject.file(".release/release.properties")
@@ -24,10 +26,6 @@ android {
 
     buildFeatures {
         compose = true
-    }
-
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.3"
     }
 
     packaging {
